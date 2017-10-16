@@ -12,6 +12,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.plugins.interceptors.encoding.AcceptEncodingGZIPInterceptor;
 import org.jboss.resteasy.plugins.interceptors.encoding.GZIPDecodingInterceptor;
 import org.jboss.resteasy.plugins.interceptors.encoding.GZIPEncodingInterceptor;
+import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.test.BaseResourceTest;
 import org.jboss.resteasy.test.TestPortProvider;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
@@ -73,7 +74,6 @@ public class GzipTest extends BaseResourceTest
       @GET
       @Path("text")
       @Produces("text/plain")
-      @GZIP
       public Response getText(@Context HttpHeaders headers)
       {
          /* Can't test this anymore because TCK expects that no accept encoding is set by default
@@ -81,7 +81,7 @@ public class GzipTest extends BaseResourceTest
          System.out.println(acceptEncoding);
          Assert.assertEquals("gzip, deflate", acceptEncoding);
          */
-         return Response.ok("HELLO WORLD").build();
+         return Response.ok("HELLO WORLD").header("Content-Encoding", "gzip").build();
       }
 
       @GET
@@ -149,6 +149,7 @@ public class GzipTest extends BaseResourceTest
    @Before
    public void setUp() throws Exception
    {
+	  ResteasyProviderFactory.getInstance().registerProvider(AcceptEncodingGZIPInterceptor.class);
       ResteasyProviderFactory.getInstance().registerProvider(GZIPEncodingInterceptor.class);
       ResteasyProviderFactory.getInstance().registerProvider(GZIPDecodingInterceptor.class);
       addPerRequestResource(GZIPService.class);
@@ -176,18 +177,23 @@ public class GzipTest extends BaseResourceTest
 
    }
 
+   private ResteasyClient getClient()
+   {
+      // register gzip explicitly
+      ResteasyProviderFactory rpf = new ResteasyProviderFactory();
+      RegisterBuiltin.register(rpf);
+      rpf.registerProvider(AcceptEncodingGZIPInterceptor.class);
+      rpf.registerProvider(GZIPEncodingInterceptor.class);
+      rpf.registerProvider(GZIPDecodingInterceptor.class);
+      return new ResteasyClientBuilder().providerFactory(rpf).build();
+   }
 
    @Test
    public void testProxy() throws Exception
    {
-      ResteasyClient client = new ResteasyClientBuilder().build();
+      ResteasyClient client = getClient();
       ResteasyWebTarget target = client.target(generateBaseUrl());
       IGZIP proxy = target.proxy(IGZIP.class);
-      // register gzip explicitly
-      ResteasyProviderFactory providerFactory = ResteasyProviderFactory.getInstance();
-      providerFactory.registerProvider(AcceptEncodingGZIPInterceptor.class);
-      providerFactory.registerProvider(GZIPDecodingInterceptor.class);
-      providerFactory.registerProvider(GZIPEncodingInterceptor.class);
       Assert.assertEquals("HELLO WORLD", proxy.getText());
       Assert.assertEquals("HELLO WORLD", proxy.getGzipText());
 
@@ -217,7 +223,7 @@ public class GzipTest extends BaseResourceTest
    @Test
    public void testContentLength() throws Exception
    {
-      ResteasyClient client = new ResteasyClientBuilder().register(GZIPDecodingInterceptor.class).build();
+      ResteasyClient client = getClient();
       {
          WebTarget target = client.target(TestPortProvider.generateURL("/text"));
          Response response = target.request().get();
@@ -250,7 +256,7 @@ public class GzipTest extends BaseResourceTest
    @Test
    public void testRequestError() throws Exception
    {
-      ResteasyClient client = new ResteasyClientBuilder().build();
+      ResteasyClient client = getClient();
       WebTarget target = client.target(TestPortProvider.generateURL("/error"));
       Response response = target.request().get();
       Assert.assertEquals(405, response.getStatus());
@@ -261,7 +267,7 @@ public class GzipTest extends BaseResourceTest
    @Test
    public void testPutStream() throws Exception
    {
-      ResteasyClient client = new ResteasyClientBuilder().build();
+      ResteasyClient client = getClient();
       WebTarget target = client.target(TestPortProvider.generateURL("/stream"));
       Response res = target.request().header("Content-Encoding", "gzip").put(Entity.text("hello world"));
       Assert.assertEquals(204, res.getStatus());
@@ -281,7 +287,7 @@ public class GzipTest extends BaseResourceTest
    @Test
    public void testRequest() throws Exception
    {
-      ResteasyClient client = new ResteasyClientBuilder().build();
+      ResteasyClient client = getClient();
       WebTarget target = client.target(TestPortProvider.generateURL("/text"));
       String val = target.request().get(String.class);
       Assert.assertEquals("HELLO WORLD", val);
@@ -292,7 +298,7 @@ public class GzipTest extends BaseResourceTest
    @Test
    public void testRequest2() throws Exception
    {
-      ResteasyClient client = new ResteasyClientBuilder().build();
+      ResteasyClient client = getClient();
       WebTarget target = client.target(TestPortProvider.generateURL("/encoded/text"));
       Response response = target.request().get();
       Assert.assertEquals("HELLO WORLD", response.readEntity(String.class));
