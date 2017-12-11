@@ -48,7 +48,7 @@ public class SecureUnmarshaller implements Unmarshaller {
 	
    private static class SAXParserProvider
    {
-      private static final Map<ClassLoader, SAXParserProvider> saxParserProviders = Collections.synchronizedMap(new WeakHashMap<>());
+      private static final Map<ClassLoader, SAXParserProvider> saxParserProviders = Collections.synchronizedMap(new WeakHashMap<ClassLoader, SAXParserProvider>());
       private final SAXParserFactory[] factories = new SAXParserFactory[8];
       
       private SAXParserProvider()
