@@ -4,11 +4,15 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.jaxrs.cfg.AnnotationBundleKey;
+import com.fasterxml.jackson.jaxrs.cfg.ObjectReaderInjector;
+import com.fasterxml.jackson.jaxrs.cfg.ObjectReaderModifier;
 import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterInjector;
 import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterModifier;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -117,33 +121,42 @@ public class ResteasyJackson2Provider extends JacksonJaxbJsonProvider
          endpoint = _configForReading(mapper, annotations, null);
          _readers.put(key, endpoint);
       }
-      final ObjectReader reader = endpoint.getReader();
+      ObjectReader reader = endpoint.getReader();
       final JsonParser jp = _createParser(reader, entityStream);
       // If null is returned, considered to be empty stream
       if (jp == null || jp.nextToken() == null) {
          return null;
       }
-      // [Issue#1]: allow 'binding' to JsonParser
-      if (((Class<?>) type) == JsonParser.class) {
-         return jp;
+      Class<?> rawType = type;
+      if (rawType == JsonParser.class) {
+          return jp;
       }
 
-      Object result = null;
-      try {
-         if (System.getSecurityManager() == null) {
-            result = reader.withType(genericType).readValue(jp);
-         } else {
-            result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-               @Override
-               public Object run() throws Exception {
-                  return reader.withType(genericType).readValue(jp);
-               }
-            });
-         }
-      } catch (PrivilegedActionException pae) {
-         throw new IOException(pae);
+      final TypeFactory tf = reader.getTypeFactory();
+      final JavaType resolvedType = tf.constructType(genericType);
+
+      // 09-Jul-2015, tatu: As per [jaxrs-providers#69], handle MappingIterator too
+      boolean multiValued = (rawType == MappingIterator.class);
+      
+      if (multiValued) {
+          JavaType[] contents = tf.findTypeParameters(resolvedType, MappingIterator.class);
+          JavaType valueType = (contents == null || contents.length == 0)
+                  ? tf.constructType(Object.class) : contents[0];
+          reader = reader.forType(valueType);
+      } else {
+          reader = reader.forType(resolvedType);
       }
-      return result;
+
+      // [Issue#32]: allow modification by filter-injectable thing
+      ObjectReaderModifier mod = ObjectReaderInjector.getAndClear();
+      if (mod != null) {
+          reader = mod.modify(endpoint, httpHeaders, resolvedType, reader, jp);
+      }
+      
+      if (multiValued) {
+          return reader.readValues(jp);
+      }
+      return reader.readValue(jp);
    }
 
    protected final ConcurrentHashMap<ClassAnnotationKey, JsonEndpointConfig> _writers
@@ -228,7 +241,7 @@ public class ResteasyJackson2Provider extends JacksonJaxbJsonProvider
          // Most of the configuration now handled through EndpointConfig, ObjectWriter
          // but we may need to force root type:
          if (rootType != null) {
-            writer = writer.withType(rootType);
+            writer = writer.forType(rootType);
          }
          value = endpoint.modifyBeforeWrite(value);
          ObjectWriterModifier mod = ObjectWriterInjector.getAndClear();
