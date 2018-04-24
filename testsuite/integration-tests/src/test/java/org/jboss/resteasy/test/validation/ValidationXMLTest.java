@@ -169,7 +169,7 @@ public class ValidationXMLTest {
             String propertyViolation = "<propertyViolations><constraintType>PROPERTY</constraintType><path>u</path><message>size must be between 3 and 5</message><value>c</value></propertyViolations>";
             String classViolationStart = "<classViolations><constraintType>CLASS</constraintType><path></path><message>Concatenation of s and u must have length &gt; 5</message><value>org.jboss.resteasy.test.validation.resource.ValidationXMLResourceWithAllFivePotentialViolations";
             String classViolationEnd = "</value></classViolations>";
-            String parameterViolation = "<parameterViolations><constraintType>PARAMETER</constraintType><path>post.arg0</path><message>s must have length: 3 &lt;= length &lt;= 5</message><value>ValidationXMLFoo[p]</value></parameterViolations>";
+            String parameterViolation = "<parameterViolations><constraintType>PARAMETER</constraintType><path>post.foo</path><message>s must have length: 3 &lt;= length &lt;= 5</message><value>ValidationXMLFoo[p]</value></parameterViolations>";
             String end = "</violationReport>";
             Assert.assertTrue(WRONG_ERROR_MSG, entity.contains(start));
             Assert.assertTrue(WRONG_ERROR_MSG, entity.contains(fieldViolation1));
@@ -258,7 +258,7 @@ public class ValidationXMLTest {
             String propertyViolation = "\"propertyViolations\":[{\"constraintType\":\"PROPERTY\",\"path\":\"u\",\"message\":\"size must be between 3 and 5\",\"value\":\"c\"}]";
             String classViolationStart = "\"classViolations\":[{\"constraintType\":\"CLASS\",\"path\":\"\",\"message\":\"Concatenation of s and u must have length > 5\",\"value\":\"org.jboss.resteasy.test.validation.resource.ValidationXMLResourceWithAllFivePotentialViolations@";
             String classViolationEnd = "}]";
-            String parameterViolation = "\"parameterViolations\":[{\"constraintType\":\"PARAMETER\",\"path\":\"post.arg0\",\"message\":\"s must have length: 3 <= length <= 5\",\"value\":\"ValidationXMLFoo[p]\"}]";
+            String parameterViolation = "\"parameterViolations\":[{\"constraintType\":\"PARAMETER\",\"path\":\"post.foo\",\"message\":\"s must have length: 3 <= length <= 5\",\"value\":\"ValidationXMLFoo[p]\"}]";
             String returnValueViolation = "\"returnValueViolations\":[]";
             String end = "}";
             Assert.assertTrue(WRONG_ERROR_MSG, entity.contains(start));
@@ -375,7 +375,7 @@ public class ValidationXMLTest {
                         "[org.jboss.resteasy.test.validation.resource.ValidationXMLResourceWithAllFivePotentialViolations";
         String parameterViolation =
                 "[PARAMETER]\r" +
-                        "[post.arg0]\r" +
+                        "[post.foo]\r" +
                         "[s must have length: 3 <= length <= 5]\r" +
                         "[ValidationXMLFoo[p]]";
         Assert.assertTrue(WRONG_ERROR_MSG, entity.contains(fieldViolation1));

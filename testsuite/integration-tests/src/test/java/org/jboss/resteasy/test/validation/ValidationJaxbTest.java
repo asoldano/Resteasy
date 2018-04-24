@@ -123,7 +123,7 @@ public class ValidationJaxbTest {
         violation = r.getClassViolations().iterator().next();
         Assert.assertEquals(UNEXPECTED_VALIDATION_ERROR_MSG, "", violation.getPath());
         violation = r.getParameterViolations().iterator().next();
-        Assert.assertEquals(UNEXPECTED_VALIDATION_ERROR_MSG, "post.arg0", violation.getPath());
+        Assert.assertEquals(UNEXPECTED_VALIDATION_ERROR_MSG, "post.foo", violation.getPath());
         response.close();
     }
 

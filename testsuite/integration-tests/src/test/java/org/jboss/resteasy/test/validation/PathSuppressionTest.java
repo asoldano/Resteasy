@@ -82,7 +82,7 @@ public class PathSuppressionTest {
      */
     @Test
     public void testInputSuppressPathDefault() throws Exception {
-        doTestInputViolations("default", "s", "t", "", "test.arg0");
+        doTestInputViolations("default", "s", "t", "", "test.u");
     }
 
     /**
@@ -91,7 +91,7 @@ public class PathSuppressionTest {
      */
     @Test
     public void testInputSuppressPathFalse() throws Exception {
-        doTestInputViolations("false", "s", "t", "", "test.arg0");
+        doTestInputViolations("false", "s", "t", "", "test.u");
     }
 
     /**
