@@ -1,7 +1,5 @@
 package org.jboss.resteasy.spi;
 
-import org.jboss.resteasy.util.HttpResponseCodes;
-
 import javax.ws.rs.core.Response;
 
 

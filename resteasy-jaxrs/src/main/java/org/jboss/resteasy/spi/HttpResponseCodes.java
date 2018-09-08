@@ -1,4 +1,4 @@
-package org.jboss.resteasy.util;
+package org.jboss.resteasy.spi;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
