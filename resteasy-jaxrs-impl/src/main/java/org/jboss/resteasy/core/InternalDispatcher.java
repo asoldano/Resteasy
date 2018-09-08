@@ -1,4 +1,4 @@
-package org.jboss.resteasy.spi;
+package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockHttpRequest;
