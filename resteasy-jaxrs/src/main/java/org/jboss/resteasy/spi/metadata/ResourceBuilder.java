@@ -12,7 +12,7 @@ import org.jboss.resteasy.util.IsHttpMethod;
 import org.jboss.resteasy.util.MediaTypeHelper;
 import org.jboss.resteasy.util.MethodHashing;
 import org.jboss.resteasy.util.PickConstructor;
-import org.jboss.resteasy.util.Types;
+import org.jboss.resteasy.spi.Types;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;

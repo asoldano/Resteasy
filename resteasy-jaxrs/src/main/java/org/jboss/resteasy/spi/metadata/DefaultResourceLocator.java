@@ -1,6 +1,6 @@
 package org.jboss.resteasy.spi.metadata;
 
-import org.jboss.resteasy.util.Types;
+import org.jboss.resteasy.spi.Types;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

@@ -1,4 +1,4 @@
-package org.jboss.resteasy.util;
+package org.jboss.resteasy.spi;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 

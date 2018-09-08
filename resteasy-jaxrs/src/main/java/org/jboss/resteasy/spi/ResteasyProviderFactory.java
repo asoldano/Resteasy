@@ -32,7 +32,7 @@ import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
 import org.jboss.resteasy.util.FeatureContextDelegate;
 import org.jboss.resteasy.util.PickConstructor;
 import org.jboss.resteasy.util.ThreadLocalStack;
-import org.jboss.resteasy.util.Types;
+import org.jboss.resteasy.spi.Types;
 
 import javax.annotation.Priority;
 import javax.ws.rs.ConstrainedTo;
