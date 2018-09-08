@@ -1,4 +1,4 @@
-package org.jboss.resteasy.spi;
+package org.jboss.resteasy.spi.util;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class Types
+public final class Types
 {
    /**
     * Is the genericType of a certain class?

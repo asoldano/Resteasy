@@ -27,12 +27,11 @@ import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
 import org.jboss.resteasy.specimpl.VariantListBuilderImpl;
 import org.jboss.resteasy.spi.metadata.ResourceBuilder;
 import org.jboss.resteasy.spi.metadata.ResourceClassProcessor;
-
+import org.jboss.resteasy.spi.util.Types;
 import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
 import org.jboss.resteasy.util.FeatureContextDelegate;
 import org.jboss.resteasy.util.PickConstructor;
 import org.jboss.resteasy.util.ThreadLocalStack;
-import org.jboss.resteasy.spi.Types;
 
 import javax.annotation.Priority;
 import javax.ws.rs.ConstrainedTo;

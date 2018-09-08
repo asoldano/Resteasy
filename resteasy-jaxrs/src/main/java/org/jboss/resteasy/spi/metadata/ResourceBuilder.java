@@ -5,14 +5,11 @@ import org.jboss.resteasy.annotations.Form;
 import org.jboss.resteasy.annotations.Query;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
-import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.jboss.resteasy.util.IsHttpMethod;
-import org.jboss.resteasy.util.MediaTypeHelper;
-import org.jboss.resteasy.util.MethodHashing;
-import org.jboss.resteasy.util.PickConstructor;
-import org.jboss.resteasy.spi.Types;
+import org.jboss.resteasy.spi.util.MethodHashing;
+import org.jboss.resteasy.spi.util.PickConstructor;
+import org.jboss.resteasy.spi.util.Types;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -31,6 +28,9 @@ import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.RuntimeDelegate;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -51,7 +51,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static org.jboss.resteasy.util.FindAnnotation.findAnnotation;
+import static org.jboss.resteasy.spi.util.FindAnnotation.findAnnotation;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -384,7 +384,7 @@ public class ResourceBuilder
          return (T)this;
       }
    }
-
+   
    public static class ConstructorParameterBuilder extends ParameterBuilder<ConstructorParameterBuilder>
    {
       final ResourceConstructorBuilder constructor;
@@ -531,10 +531,10 @@ public class ResourceBuilder
 
       public ResourceClassBuilder buildMethod()
       {
-         ResteasyUriBuilder builder = new ResteasyUriBuilder();
+         UriBuilder builder = RuntimeDelegate.getInstance().createUriBuilder();
          if (locator.resourceClass.getPath() != null) builder.path(locator.resourceClass.getPath());
          if (locator.path != null) builder.path(locator.path);
-         String pathExpression = builder.getPath();
+         String pathExpression = builder.build().getPath();
          if (pathExpression == null)
             pathExpression = "";
          locator.fullpath = pathExpression;
@@ -620,7 +620,7 @@ public class ResourceBuilder
          {
             if (!mt.getParameters().containsKey(MediaType.CHARSET_PARAMETER))
             {
-               if (MediaTypeHelper.isTextLike(mt))
+               if (isTextLike(mt))
                {
                   ResteasyDeployment deployment = ResteasyProviderFactory.getContextData(ResteasyDeployment.class);
                   if (deployment != null && !deployment.isAddCharset())
@@ -631,6 +631,13 @@ public class ResourceBuilder
             }
          }
          return this;
+      }
+      
+      private static boolean isTextLike(MediaType mediaType)
+      {
+         return "text".equalsIgnoreCase(mediaType.getType())
+               || ("application".equalsIgnoreCase(mediaType.getType())
+                     && mediaType.getSubtype().toLowerCase().startsWith("xml"));
       }
 
       protected MediaType[] parseMediaTypes(String[] produces)
@@ -666,10 +673,10 @@ public class ResourceBuilder
 
       public ResourceClassBuilder buildMethod()
       {
-         ResteasyUriBuilder builder = new ResteasyUriBuilder();
+         UriBuilder builder = RuntimeDelegate.getInstance().createUriBuilder();
          if (method.resourceClass.getPath() != null) builder.path(method.resourceClass.getPath());
          if (method.path != null) builder.path(method.path);
-         String pathExpression = builder.getPath();
+         String pathExpression = builder.build().getPath();
          if (pathExpression == null)
             pathExpression = "";
          method.fullpath = pathExpression;
@@ -856,6 +863,18 @@ public class ResourceBuilder
       processSetters(builder, clazz);
       return applyProcessors(builder.buildClass());
    }
+   
+   private static Set<String> getHttpMethods(Method method)
+   {
+      HashSet<String> methods = new HashSet<String>();
+      for (Annotation annotation : method.getAnnotations())
+      {
+         HttpMethod http = annotation.annotationType().getAnnotation(HttpMethod.class);
+         if (http != null) methods.add(http.value());
+      }
+      if (methods.size() == 0) return null;
+      return methods;
+   }
 
    @Deprecated
    public static Method findAnnotatedMethod(final Class<?> root, final Method implementation)
@@ -878,7 +897,7 @@ public class ResourceBuilder
       }
 
       // Check the method itself for JAX-RS annotations
-      if (implementation.isAnnotationPresent(Path.class) || IsHttpMethod.getHttpMethods(implementation) != null)
+      if (implementation.isAnnotationPresent(Path.class) || getHttpMethods(implementation) != null)
       {
          return implementation;
       }
@@ -905,7 +924,7 @@ public class ResourceBuilder
             continue;
          }
 
-         if (overriddenMethod.isAnnotationPresent(Path.class) || IsHttpMethod.getHttpMethods(overriddenMethod) != null)
+         if (overriddenMethod.isAnnotationPresent(Path.class) || getHttpMethods(overriddenMethod) != null)
          {
             return overriddenMethod;
          }
@@ -932,7 +951,7 @@ public class ResourceBuilder
             {
                continue;
             }
-            if (!overriddenInterfaceMethod.isAnnotationPresent(Path.class) && IsHttpMethod.getHttpMethods(overriddenInterfaceMethod) == null)
+            if (!overriddenInterfaceMethod.isAnnotationPresent(Path.class) && getHttpMethods(overriddenInterfaceMethod) == null)
             {
                if (overriddenInterfaceMethod.isAnnotationPresent(Produces.class) || overriddenInterfaceMethod.isAnnotationPresent(Consumes.class))
                {
@@ -1056,7 +1075,7 @@ public class ResourceBuilder
       Method method = getAnnotatedMethod(root, implementation);
       if (method != null)
       {
-         Set<String> httpMethods = IsHttpMethod.getHttpMethods(method);
+         Set<String> httpMethods = getHttpMethods(method);
 
          ResourceLocatorBuilder resourceLocatorBuilder;
 

@@ -1,4 +1,4 @@
-package org.jboss.resteasy.util;
+package org.jboss.resteasy.spi.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -10,7 +10,7 @@ import java.security.MessageDigest;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class MethodHashing
+public final class MethodHashing
 {
    public static long methodHash(Method method)
            throws Exception

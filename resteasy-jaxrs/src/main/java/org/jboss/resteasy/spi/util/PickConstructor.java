@@ -1,4 +1,4 @@
-package org.jboss.resteasy.util;
+package org.jboss.resteasy.spi.util;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 
@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class PickConstructor
+public final class PickConstructor
 {
 
    /**
