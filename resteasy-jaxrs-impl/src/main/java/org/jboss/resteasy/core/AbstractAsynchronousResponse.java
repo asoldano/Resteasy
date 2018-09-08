@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public abstract class AbstractAsynchronousResponse implements ResteasyAsynchronousResponse
+public abstract class AbstractAsynchronousResponse implements ResteasyAsynchronousResponse, ResourceMethodInvokerAwareResponse
 {
    protected SynchronousDispatcher dispatcher;
    protected ResourceMethodInvoker method;

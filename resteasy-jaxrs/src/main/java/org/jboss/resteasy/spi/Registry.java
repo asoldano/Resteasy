@@ -1,6 +1,5 @@
 package org.jboss.resteasy.spi;
 
-import org.jboss.resteasy.core.ResourceInvoker;
 import org.jboss.resteasy.spi.metadata.ResourceClass;
 
 /**

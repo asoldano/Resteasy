@@ -1,11 +1,12 @@
-package org.jboss.resteasy.core;
+package org.jboss.resteasy.spi;
 
-import org.jboss.resteasy.specimpl.BuiltResponse;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.CompletionStage;
+
+import javax.ws.rs.core.Response;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -13,8 +14,8 @@ import java.util.concurrent.CompletionStage;
  */
 public interface ResourceInvoker
 {
-   CompletionStage<BuiltResponse> invoke(HttpRequest request, HttpResponse response);
-   CompletionStage<BuiltResponse> invoke(HttpRequest request, HttpResponse response, Object target);
+   CompletionStage<? extends Response> invoke(HttpRequest request, HttpResponse response);
+   CompletionStage<? extends Response> invoke(HttpRequest request, HttpResponse response, Object target);
 
    Method getMethod();
 }
