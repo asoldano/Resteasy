@@ -109,7 +109,7 @@ public class WeightedLanguage implements Comparable<WeightedLanguage>
       }
       catch (NumberFormatException e)
       {
-         throw new LoggableFailure(Messages.MESSAGES.mediaTypeQWeightedLanguageMustBeFloat(lang), HttpResponseCodes.SC_BAD_REQUEST);
+         throw new LoggableFailure(Messages.MESSAGES.mediaTypeQWeightedLanguageMustBeFloat(lang.toString()), HttpResponseCodes.SC_BAD_REQUEST);
       }
       return 1.0f;
    }

@@ -11,7 +11,6 @@ import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.Message.Format;
-import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.logging.annotations.MessageLogger;
 
 /**
@@ -202,7 +201,7 @@ public interface LogMessages extends BasicLogger
    void deployingApplication(String className, Class<?> clazz);
 
    @LogMessage(level = Level.INFO)
-   @Message(id = BASE + 227, value = "MediaType {0} on {1}() lacks charset. Consider setting charset or turning on context parameter " + ResteasyContextParameters.RESTEASY_ADD_CHARSET, format=Format.MESSAGE_FORMAT)
+   @Message(id = BASE + 227, value = "MediaType {0} on {1}() lacks charset. Consider setting charset or turning on context parameter resteasy.add.charset", format=Format.MESSAGE_FORMAT)
    void mediaTypeLacksCharset(MediaType mediaType, String method);
    
    @LogMessage(level = Level.INFO)

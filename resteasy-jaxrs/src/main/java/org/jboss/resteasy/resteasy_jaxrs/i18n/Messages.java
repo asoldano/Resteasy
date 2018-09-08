@@ -15,7 +15,6 @@ import org.jboss.logging.annotations.Message.Format;
 import org.jboss.logging.annotations.MessageBundle;
 import org.jboss.resteasy.annotations.Stream;
 import org.jboss.resteasy.api.validation.ConstraintType;
-import org.jboss.resteasy.util.WeightedLanguage;
 
 /**
  * 
@@ -429,7 +428,7 @@ public interface Messages
    String mediaTypeQMustBeFloat(MediaType mediaType);
 
    @Message(id = BASE + 550, value = "MediaType q parameter must be a float: %s")
-   String mediaTypeQWeightedLanguageMustBeFloat(WeightedLanguage lang);
+   String mediaTypeQWeightedLanguageMustBeFloat(String lang);
    
    @Message(id = BASE + 555, value = "MediaType value is null")
    String mediaTypeValueNull();
