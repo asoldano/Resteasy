@@ -1,6 +1,7 @@
-package org.jboss.resteasy.spi.touri;
+package org.jboss.resteasy.plugins.touri;
 
 import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
+import org.jboss.resteasy.spi.touri.URITemplate;
 
 import java.lang.annotation.Annotation;
 

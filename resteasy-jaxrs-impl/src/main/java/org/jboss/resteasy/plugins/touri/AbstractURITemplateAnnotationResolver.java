@@ -1,7 +1,8 @@
-package org.jboss.resteasy.spi.touri;
+package org.jboss.resteasy.plugins.touri;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
+import org.jboss.resteasy.spi.touri.URIResolver;
 import org.jboss.resteasy.util.AnnotationResolver;
 
 import java.beans.BeanInfo;

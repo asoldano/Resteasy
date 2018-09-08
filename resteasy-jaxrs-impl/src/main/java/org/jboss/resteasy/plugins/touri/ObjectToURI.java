@@ -1,7 +1,9 @@
-package org.jboss.resteasy.spi.touri;
+package org.jboss.resteasy.plugins.touri;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.resteasy.spi.touri.URIResolver;
 
 /**
  * <p>

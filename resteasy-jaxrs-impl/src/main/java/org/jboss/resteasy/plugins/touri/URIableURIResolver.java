@@ -1,4 +1,7 @@
-package org.jboss.resteasy.spi.touri;
+package org.jboss.resteasy.plugins.touri;
+
+import org.jboss.resteasy.spi.touri.URIResolver;
+import org.jboss.resteasy.spi.touri.URIable;
 
 /**
  * URIResolver Adapter for URIable classes
