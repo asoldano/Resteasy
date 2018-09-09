@@ -21,11 +21,11 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.resteasy.plugins.server.BaseHttpRequest;
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.jboss.resteasy.specimpl.ResteasyHttpHeaders;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.NotImplementedYetException;
 import org.jboss.resteasy.spi.ResteasyAsynchronousContext;
 import org.jboss.resteasy.spi.ResteasyAsynchronousResponse;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.jboss.resteasy.util.CaseInsensitiveMap;
 import org.jboss.resteasy.util.HttpHeaderNames;
 import org.jboss.resteasy.util.ReadFromStream;
@@ -136,7 +136,7 @@ public class MockHttpRequest extends BaseHttpRequest
    public static MockHttpRequest deepCopy(HttpRequest request) throws IOException
    {
       MockHttpRequest mock = new MockHttpRequest();
-      mock.uri = request.getUri();
+      mock.uri = (ResteasyUriInfo) request.getUri();
       mock.httpHeaders = (ResteasyHttpHeaders) request.getHttpHeaders();
       mock.httpMethod = request.getHttpMethod();
       byte[] bytes = ReadFromStream.readFromStream(1024, request.getInputStream());

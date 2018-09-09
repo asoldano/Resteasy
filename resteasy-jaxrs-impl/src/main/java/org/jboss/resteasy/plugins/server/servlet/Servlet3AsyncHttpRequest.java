@@ -6,10 +6,10 @@ import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.specimpl.ResteasyHttpHeaders;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyAsynchronousContext;
 import org.jboss.resteasy.spi.ResteasyAsynchronousResponse;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;

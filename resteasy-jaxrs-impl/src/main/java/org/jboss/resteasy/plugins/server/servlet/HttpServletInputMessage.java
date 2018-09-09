@@ -7,9 +7,9 @@ import org.jboss.resteasy.plugins.server.BaseHttpRequest;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.jboss.resteasy.specimpl.ResteasyHttpHeaders;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyAsynchronousContext;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.jboss.resteasy.util.Encode;
 
 import javax.servlet.ServletContext;

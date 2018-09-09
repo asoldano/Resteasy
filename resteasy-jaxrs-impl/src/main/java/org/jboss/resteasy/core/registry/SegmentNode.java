@@ -5,9 +5,9 @@ import org.jboss.resteasy.core.ResourceLocatorInvoker;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.DefaultOptionsMethodException;
 import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
 import org.jboss.resteasy.util.HttpHeaderNames;
 import org.jboss.resteasy.util.HttpResponseCodes;
@@ -74,7 +74,7 @@ public class SegmentNode
 
    public ResourceInvoker match(HttpRequest request, int start)
    {
-      String path = request.getUri().getMatchingPath();
+      String path = ((ResteasyUriInfo) request.getUri()).getMatchingPath();
       RESTEasyTracingLogger logger = RESTEasyTracingLogger.getInstance(request);
       logger.log("MATCH_PATH_FIND", request.getUri().getMatchingPath());
 

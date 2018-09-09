@@ -2,10 +2,11 @@ package org.jboss.resteasy.util;
 
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.ResteasyAsynchronousContext;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Enumeration;
@@ -36,7 +37,7 @@ public class DelegatingHttpRequest implements HttpRequest
    }
 
    @Override
-   public ResteasyUriInfo getUri()
+   public UriInfo getUri()
    {
       return delegate.getUri();
    }

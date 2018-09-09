@@ -1,4 +1,4 @@
-package org.jboss.resteasy.spi;
+package org.jboss.resteasy.specimpl;
 
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.jboss.resteasy.specimpl.PathSegmentImpl;

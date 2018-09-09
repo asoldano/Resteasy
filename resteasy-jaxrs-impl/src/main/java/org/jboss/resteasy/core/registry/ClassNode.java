@@ -1,8 +1,8 @@
 package org.jboss.resteasy.core.registry;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
 import javax.ws.rs.NotFoundException;
 
@@ -31,7 +31,7 @@ public class ClassNode
 
    public RootNode match(HttpRequest request, int start)
    {
-      String path = request.getUri().getMatchingPath();
+      String path = ((ResteasyUriInfo) request.getUri()).getMatchingPath();
       if (start < path.length() && path.charAt(start) == '/') start++;
       List<ClassExpression> potentials = new ArrayList<ClassExpression>();
       potentials(path, start, potentials);
@@ -45,7 +45,7 @@ public class ClassNode
 
          if (matcher.matches())
          {
-            ResteasyUriInfo uriInfo = request.getUri();
+            ResteasyUriInfo uriInfo = (ResteasyUriInfo) request.getUri();
             int length = matcher.start(expression.getNumGroups() + 1);
             if (length == -1)
             {

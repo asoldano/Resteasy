@@ -2,6 +2,7 @@ package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.specimpl.BuiltResponse;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.ApplicationException;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
@@ -10,7 +11,6 @@ import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jboss.resteasy.spi.MethodInjector;
 import org.jboss.resteasy.spi.ResourceFactory;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.jboss.resteasy.spi.metadata.ResourceLocator;
 import org.jboss.resteasy.util.GetRestful;
 

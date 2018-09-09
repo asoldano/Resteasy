@@ -2,8 +2,8 @@ package org.jboss.resteasy.plugins.server;
 
 import org.jboss.resteasy.plugins.providers.FormUrlEncodedProvider;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 import org.jboss.resteasy.util.Encode;
 
 import javax.ws.rs.core.MediaType;

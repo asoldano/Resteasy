@@ -2,6 +2,8 @@ package org.jboss.resteasy.spi;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Enumeration;
@@ -32,7 +34,7 @@ public interface HttpRequest
     * This method *MUST* always return the same instance.
     * @return uri info
     */
-   ResteasyUriInfo getUri();
+   UriInfo getUri();
 
    String getHttpMethod();
    void setHttpMethod(String method);

@@ -4,8 +4,8 @@ import org.jboss.resteasy.core.ResourceInvoker;
 import org.jboss.resteasy.core.ResourceLocatorInvoker;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.PathSegment;
