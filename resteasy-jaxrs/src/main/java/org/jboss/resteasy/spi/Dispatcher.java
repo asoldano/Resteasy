@@ -1,4 +1,4 @@
-package org.jboss.resteasy.core;
+package org.jboss.resteasy.spi;
 
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpRequestPreprocessor;
