@@ -1,4 +1,4 @@
-package org.jboss.resteasy.core;
+package org.jboss.resteasy.spi;
 
 import java.util.concurrent.CompletionStage;
 

@@ -4,6 +4,7 @@ import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyAsynchronousResponse;
+import org.jboss.resteasy.spi.ValueInjector;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;

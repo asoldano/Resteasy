@@ -8,6 +8,7 @@ import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jboss.resteasy.spi.PropertyInjector;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.ValueInjector;
 import org.jboss.resteasy.util.FindAnnotation;
 import org.jboss.resteasy.util.MethodHashing;
 
