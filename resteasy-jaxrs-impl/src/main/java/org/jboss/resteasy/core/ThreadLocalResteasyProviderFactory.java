@@ -40,7 +40,7 @@ import org.jboss.resteasy.spi.InjectorFactory;
 import org.jboss.resteasy.spi.ProviderFactoryDelegate;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.StringParameterUnmarshaller;
-import org.jboss.resteasy.util.ThreadLocalStack;
+import org.jboss.resteasy.spi.util.ThreadLocalStack;
 
 /**
  * Allow applications to push/pop provider factories onto the stack.
@@ -48,7 +48,7 @@ import org.jboss.resteasy.util.ThreadLocalStack;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFactory implements ProviderFactoryDelegate
+public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFactoryImpl implements ProviderFactoryDelegate
 {
    private static final ThreadLocalStack<ResteasyProviderFactory> delegate = new ThreadLocalStack<ResteasyProviderFactory>();
 
@@ -110,13 +110,13 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public ContainerResponseFilterRegistry getContainerResponseFilterRegistry()
    {
-      return getDelegate().getContainerResponseFilterRegistry();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getContainerResponseFilterRegistry();
    }
 
    @Override
    public ReaderInterceptorRegistry getServerReaderInterceptorRegistry()
    {
-      return getDelegate().getServerReaderInterceptorRegistry();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getServerReaderInterceptorRegistry();
    }
 
    @Override
@@ -233,7 +233,7 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public ContainerRequestFilterRegistry getContainerRequestFilterRegistry()
    {
-      return getDelegate().getContainerRequestFilterRegistry();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getContainerRequestFilterRegistry();
    }
 
    @Override
@@ -251,7 +251,7 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public ReaderInterceptorRegistry getClientReaderInterceptorRegistry()
    {
-      return getDelegate().getClientReaderInterceptorRegistry();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientReaderInterceptorRegistry();
    }
 
    @Override
@@ -329,7 +329,7 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public WriterInterceptorRegistry getServerWriterInterceptorRegistry()
    {
-      return getDelegate().getServerWriterInterceptorRegistry();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getServerWriterInterceptorRegistry();
    }
 
    @Override
@@ -377,7 +377,7 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public WriterInterceptorRegistry getClientWriterInterceptorRegistry()
    {
-      return getDelegate().getClientWriterInterceptorRegistry();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientWriterInterceptorRegistry();
    }
 
    @Override
@@ -401,7 +401,7 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public ClientResponseFilterRegistry getClientResponseFilters()
    {
-      return getDelegate().getClientResponseFilters();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientResponseFilters();
    }
 
    @Override
@@ -455,7 +455,7 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public ClientRequestFilterRegistry getClientRequestFilterRegistry()
    {
-      return getDelegate().getClientRequestFilterRegistry();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientRequestFilterRegistry();
    }
 
    @Override
@@ -506,7 +506,7 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    @Override
    public Map<Class<?>, ExceptionMapper> getExceptionMappers()
    {
-      return getDelegate().getExceptionMappers();
+      return ((ResteasyProviderFactoryImpl)getDelegate()).getExceptionMappers();
    }
 
    @Override

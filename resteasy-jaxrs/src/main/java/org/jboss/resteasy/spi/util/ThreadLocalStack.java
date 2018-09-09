@@ -1,4 +1,4 @@
-package org.jboss.resteasy.util;
+package org.jboss.resteasy.spi.util;
 
 import java.util.ArrayList;
 
