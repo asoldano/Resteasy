@@ -4,7 +4,8 @@ import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.plugins.delegates.LocaleDelegate;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.spi.HeaderValueProcessor;
-import org.jboss.resteasy.spi.LinkHeaders;
+import org.jboss.resteasy.spi.LinkHeader;
+import org.jboss.resteasy.spi.LinkHeaderDelegate;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.util.CaseInsensitiveMap;
 import org.jboss.resteasy.util.DateUtil;
@@ -447,7 +448,7 @@ public class BuiltResponse extends Response
       return links;
    }
 
-   protected LinkHeaders getLinkHeaders()
+   private LinkHeaders getLinkHeaders()
    {
       LinkHeaders linkHeaders = new LinkHeaders();
       linkHeaders.addLinkObjects(metadata, getHeaderValueProcessor());
@@ -474,4 +475,52 @@ public class BuiltResponse extends Response
       return Link.fromLink(link);
    }
 
+   
+   private final class LinkHeaders
+   {
+      private Map<String, Link> linksByRelationship = new HashMap<String, Link>();
+      private List<Link> links = new ArrayList<Link>();
+
+      public LinkHeaders addLinkObjects(MultivaluedMap<String, Object> headers, HeaderValueProcessor factory)
+      {
+         List<Object> values = headers.get("Link");
+         if (values == null) return this;
+         for (Object val : values)
+         {
+            if (val instanceof Link) addLink((Link)val);
+            else
+            {
+               String str = factory.toHeaderString(val);
+               addLink(Link.valueOf(str));
+            }
+         }
+         return this;
+      }
+
+      public LinkHeaders addLink(final Link link)
+      {
+         links.add(link);
+         for (String rel : link.getRels())
+         {
+            linksByRelationship.put(rel, link);
+         }
+         return this;
+      }
+
+      public Link getLinkByRelationship(String rel)
+      {
+         return linksByRelationship.get(rel);
+      }
+
+      /**
+       * All the links defined.
+       *
+       * @return links
+       */
+      public List<Link> getLinks()
+      {
+         return links;
+      }
+
+   }
 }
