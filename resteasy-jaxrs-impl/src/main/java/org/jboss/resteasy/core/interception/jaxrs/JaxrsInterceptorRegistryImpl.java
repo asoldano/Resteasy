@@ -2,6 +2,8 @@ package org.jboss.resteasy.core.interception.jaxrs;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistryListener;
 
 import javax.annotation.Priority;
 import javax.ws.rs.NameBinding;
@@ -14,7 +16,6 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -22,28 +23,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@SuppressWarnings("unchecked")
-public class JaxrsInterceptorRegistry<T>
+@SuppressWarnings({"unchecked", "rawtypes"})
+public class JaxrsInterceptorRegistryImpl<T> implements JaxrsInterceptorRegistry<T>
 {
-   public static class Match
-   {
-      public Match(Object interceptor, int order)
-      {
-         this.interceptor = interceptor;
-         this.order = order;
-      }
-
-      final public Object interceptor;
-      final public int order;
-   }
-
-   public interface InterceptorFactory
-   {
-      Match preMatch();
-
-      Match postMatch(Class declaring, AccessibleObject target);
-   }
-
    protected static List<Class<? extends Annotation>> getNameBound(Class<?> declaring)
    {
       List<Class<? extends Annotation>> nameBound = new ArrayList<Class<? extends Annotation>>();
@@ -245,7 +227,7 @@ public class JaxrsInterceptorRegistry<T>
    protected Class<T> intf;
    protected volatile T[] cachedPreMatch;
 
-   public JaxrsInterceptorRegistry(ResteasyProviderFactory providerFactory, Class<T> intf)
+   public JaxrsInterceptorRegistryImpl(ResteasyProviderFactory providerFactory, Class<T> intf)
    {
       this.providerFactory = providerFactory;
       this.intf = intf;
@@ -253,7 +235,7 @@ public class JaxrsInterceptorRegistry<T>
 
    public JaxrsInterceptorRegistry<T> clone(ResteasyProviderFactory factory)
    {
-      JaxrsInterceptorRegistry<T> clone = new JaxrsInterceptorRegistry(factory, intf);
+      JaxrsInterceptorRegistryImpl<T> clone = new JaxrsInterceptorRegistryImpl(factory, intf);
       clone.interceptors.addAll(interceptors);
       return clone;
    }
@@ -262,39 +244,6 @@ public class JaxrsInterceptorRegistry<T>
    {
       return intf;
    }
-
-   public static class AscendingPrecedenceComparator implements Comparator<Match>
-   {
-      public int compare(Match match, Match match2)
-      {
-         if (match.order < match2.order)
-         {
-            return -1;
-         }
-         if (match.order == match2.order)
-         {
-            return 0;
-         }
-         return 1;
-      }
-   }
-
-   public static class DescendingPrecedenceComparator implements Comparator<Match>
-   {
-      public int compare(Match match, Match match2)
-      {
-         if (match2.order < match.order)
-         {
-            return -1;
-         }
-         if (match2.order == match.order)
-         {
-            return 0;
-         }
-         return 1;
-      }
-   }
-
 
    public List<JaxrsInterceptorRegistryListener> getListeners()
    {

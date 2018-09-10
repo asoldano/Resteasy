@@ -8,16 +8,16 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class WriterInterceptorRegistry extends JaxrsInterceptorRegistry<WriterInterceptor>
+public class WriterInterceptorRegistryImpl extends JaxrsInterceptorRegistryImpl<WriterInterceptor>
 {
-   public WriterInterceptorRegistry(ResteasyProviderFactory providerFactory)
+   public WriterInterceptorRegistryImpl(ResteasyProviderFactory providerFactory)
    {
       super(providerFactory, WriterInterceptor.class);
    }
 
-   public WriterInterceptorRegistry clone(ResteasyProviderFactory factory)
+   public WriterInterceptorRegistryImpl clone(ResteasyProviderFactory factory)
    {
-      WriterInterceptorRegistry clone = new WriterInterceptorRegistry(factory);
+      WriterInterceptorRegistryImpl clone = new WriterInterceptorRegistryImpl(factory);
       clone.interceptors.addAll(interceptors);
       return clone;
    }

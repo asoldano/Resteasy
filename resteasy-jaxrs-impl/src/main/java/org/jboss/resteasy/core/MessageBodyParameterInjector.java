@@ -16,8 +16,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.ReaderInterceptor;
 
 import org.jboss.resteasy.core.interception.jaxrs.AbstractReaderInterceptorContext;
-import org.jboss.resteasy.core.interception.jaxrs.JaxrsInterceptorRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.JaxrsInterceptorRegistryListener;
 import org.jboss.resteasy.core.interception.jaxrs.ServerReaderInterceptorContext;
 import org.jboss.resteasy.plugins.server.servlet.HttpServletInputMessage;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
@@ -28,6 +26,8 @@ import org.jboss.resteasy.spi.MarshalledEntity;
 import org.jboss.resteasy.spi.ReaderException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.ValueInjector;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistryListener;
 import org.jboss.resteasy.spi.util.ThreadLocalStack;
 import org.jboss.resteasy.spi.util.Types;
 import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
@@ -70,7 +70,7 @@ public class MessageBodyParameterInjector implements ValueInjector, JaxrsInterce
    private Class type;
    private Type genericType;
    private Annotation[] annotations;
-   private ResteasyProviderFactoryImpl factory;
+   private ResteasyProviderFactory factory;
    private Class declaringClass;
    private AccessibleObject target;
    private ReaderInterceptor[] interceptors;
@@ -78,7 +78,7 @@ public class MessageBodyParameterInjector implements ValueInjector, JaxrsInterce
 
    public MessageBodyParameterInjector(Class declaringClass, AccessibleObject target, Class type, Type genericType, Annotation[] annotations, ResteasyProviderFactory factory)
    {
-      this.factory = (ResteasyProviderFactoryImpl)factory;
+      this.factory = factory;
       this.target = target;
       this.declaringClass = declaringClass;
 

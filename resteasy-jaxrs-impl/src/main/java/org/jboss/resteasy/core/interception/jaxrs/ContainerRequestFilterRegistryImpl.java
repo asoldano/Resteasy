@@ -10,20 +10,21 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class ContainerRequestFilterRegistry extends JaxrsInterceptorRegistry<ContainerRequestFilter>
+public class ContainerRequestFilterRegistryImpl extends JaxrsInterceptorRegistryImpl<ContainerRequestFilter>
 {
-   public ContainerRequestFilterRegistry(ResteasyProviderFactory providerFactory)
+   public ContainerRequestFilterRegistryImpl(ResteasyProviderFactory providerFactory)
    {
       super(providerFactory, ContainerRequestFilter.class);
    }
 
-   public ContainerRequestFilterRegistry clone(ResteasyProviderFactory factory)
+   public ContainerRequestFilterRegistryImpl clone(ResteasyProviderFactory factory)
    {
-      ContainerRequestFilterRegistry clone = new ContainerRequestFilterRegistry(factory);
+      ContainerRequestFilterRegistryImpl clone = new ContainerRequestFilterRegistryImpl(factory);
       clone.interceptors.addAll(interceptors);
       return clone;
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
    public ContainerRequestFilter[] postMatch(Class declaring, AccessibleObject target)
    {

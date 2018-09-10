@@ -1,18 +1,13 @@
 package org.jboss.resteasy.spi;
 
-import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
-import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
-import org.jboss.resteasy.spi.metadata.ResourceBuilder;
-import org.jboss.resteasy.spi.metadata.ResourceClassProcessor;
-import org.jboss.resteasy.spi.util.ThreadLocalStack;
-import org.jboss.resteasy.spi.util.Types;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javax.annotation.Priority;
-import javax.ws.rs.ConstrainedTo;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.Produces;
-import javax.ws.rs.RuntimeType;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.client.RxInvoker;
@@ -20,56 +15,24 @@ import javax.ws.rs.client.RxInvokerProvider;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Configurable;
 import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Variant;
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.ParamConverter;
-import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Providers;
 import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.RuntimeDelegate;
-import javax.ws.rs.ext.RuntimeDelegate.HeaderDelegate;
 import javax.ws.rs.ext.WriterInterceptor;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
+import org.jboss.resteasy.spi.metadata.ResourceBuilder;
+import org.jboss.resteasy.spi.util.ThreadLocalStack;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -254,6 +217,22 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
    public abstract InjectorFactory getInjectorFactory();
 
    public abstract void setInjectorFactory(InjectorFactory injectorFactory);
+   
+   public abstract JaxrsInterceptorRegistry<ReaderInterceptor> getServerReaderInterceptorRegistry();
+
+   public abstract JaxrsInterceptorRegistry<WriterInterceptor> getServerWriterInterceptorRegistry();
+
+   public abstract JaxrsInterceptorRegistry<ContainerRequestFilter> getContainerRequestFilterRegistry();
+
+   public abstract JaxrsInterceptorRegistry<ContainerResponseFilter> getContainerResponseFilterRegistry();
+
+   public abstract JaxrsInterceptorRegistry<ReaderInterceptor> getClientReaderInterceptorRegistry();
+
+   public abstract JaxrsInterceptorRegistry<WriterInterceptor> getClientWriterInterceptorRegistry();
+
+   public abstract JaxrsInterceptorRegistry<ClientRequestFilter> getClientRequestFilterRegistry();
+
+   public abstract JaxrsInterceptorRegistry<ClientResponseFilter> getClientResponseFilters();
 
    public abstract boolean isBuiltinsRegistered();
 

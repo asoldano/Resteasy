@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.resteasy.core.interception.jaxrs.ClientRequestFilterRegistry;
-
 import javax.ws.rs.RuntimeType;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.client.ClientResponseFilter;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
@@ -24,12 +26,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.ParamConverter;
+import javax.ws.rs.ext.ReaderInterceptor;
+import javax.ws.rs.ext.WriterInterceptor;
 
-import org.jboss.resteasy.core.interception.jaxrs.ClientResponseFilterRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.ContainerRequestFilterRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.ContainerResponseFilterRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.ReaderInterceptorRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.WriterInterceptorRegistry;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.spi.AsyncResponseProvider;
 import org.jboss.resteasy.spi.AsyncStreamProvider;
@@ -40,6 +39,7 @@ import org.jboss.resteasy.spi.InjectorFactory;
 import org.jboss.resteasy.spi.ProviderFactoryDelegate;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.StringParameterUnmarshaller;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 import org.jboss.resteasy.spi.util.ThreadLocalStack;
 
 /**
@@ -48,6 +48,7 @@ import org.jboss.resteasy.spi.util.ThreadLocalStack;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
+@SuppressWarnings("rawtypes")
 public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFactoryImpl implements ProviderFactoryDelegate
 {
    private static final ThreadLocalStack<ResteasyProviderFactory> delegate = new ThreadLocalStack<ResteasyProviderFactory>();
@@ -108,15 +109,15 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    }
 
    @Override
-   public ContainerResponseFilterRegistry getContainerResponseFilterRegistry()
+   public JaxrsInterceptorRegistry<ContainerResponseFilter> getContainerResponseFilterRegistry()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getContainerResponseFilterRegistry();
+      return getDelegate().getContainerResponseFilterRegistry();
    }
 
    @Override
-   public ReaderInterceptorRegistry getServerReaderInterceptorRegistry()
+   public JaxrsInterceptorRegistry<ReaderInterceptor> getServerReaderInterceptorRegistry()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getServerReaderInterceptorRegistry();
+      return getDelegate().getServerReaderInterceptorRegistry();
    }
 
    @Override
@@ -231,9 +232,9 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    }
 
    @Override
-   public ContainerRequestFilterRegistry getContainerRequestFilterRegistry()
+   public JaxrsInterceptorRegistry<ContainerRequestFilter> getContainerRequestFilterRegistry()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getContainerRequestFilterRegistry();
+      return getDelegate().getContainerRequestFilterRegistry();
    }
 
    @Override
@@ -249,9 +250,9 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    }
 
    @Override
-   public ReaderInterceptorRegistry getClientReaderInterceptorRegistry()
+   public JaxrsInterceptorRegistry<ReaderInterceptor> getClientReaderInterceptorRegistry()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientReaderInterceptorRegistry();
+      return getDelegate().getClientReaderInterceptorRegistry();
    }
 
    @Override
@@ -327,9 +328,9 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    }
 
    @Override
-   public WriterInterceptorRegistry getServerWriterInterceptorRegistry()
+   public JaxrsInterceptorRegistry<WriterInterceptor> getServerWriterInterceptorRegistry()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getServerWriterInterceptorRegistry();
+      return getDelegate().getServerWriterInterceptorRegistry();
    }
 
    @Override
@@ -375,9 +376,9 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    }
 
    @Override
-   public WriterInterceptorRegistry getClientWriterInterceptorRegistry()
+   public JaxrsInterceptorRegistry<WriterInterceptor> getClientWriterInterceptorRegistry()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientWriterInterceptorRegistry();
+      return getDelegate().getClientWriterInterceptorRegistry();
    }
 
    @Override
@@ -399,9 +400,9 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    }
 
    @Override
-   public ClientResponseFilterRegistry getClientResponseFilters()
+   public JaxrsInterceptorRegistry<ClientResponseFilter> getClientResponseFilters()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientResponseFilters();
+      return getDelegate().getClientResponseFilters();
    }
 
    @Override
@@ -453,9 +454,9 @@ public final class ThreadLocalResteasyProviderFactory extends ResteasyProviderFa
    }
 
    @Override
-   public ClientRequestFilterRegistry getClientRequestFilterRegistry()
+   public JaxrsInterceptorRegistry<ClientRequestFilter> getClientRequestFilterRegistry()
    {
-      return ((ResteasyProviderFactoryImpl)getDelegate()).getClientRequestFilterRegistry();
+      return getDelegate().getClientRequestFilterRegistry();
    }
 
    @Override

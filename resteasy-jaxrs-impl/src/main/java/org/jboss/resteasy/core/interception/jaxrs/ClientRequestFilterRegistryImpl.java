@@ -5,14 +5,11 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.container.PreMatching;
 
-/**
- * Created by rsearls on 8/4/17.
- */
-public class ClientRequestFilterRegistry extends JaxrsInterceptorRegistry<ClientRequestFilter> {
+public class ClientRequestFilterRegistryImpl extends JaxrsInterceptorRegistryImpl<ClientRequestFilter> {
 
    //private static final Logger LOGGER = Logger.getLogger(ClientRequestFilterRegistry.class.getName());
 
-   public ClientRequestFilterRegistry(ResteasyProviderFactory providerFactory)
+   public ClientRequestFilterRegistryImpl(ResteasyProviderFactory providerFactory)
    {
       super(providerFactory, ClientRequestFilter.class);
    }
@@ -50,6 +47,7 @@ public class ClientRequestFilterRegistry extends JaxrsInterceptorRegistry<Client
       register(factory);
    }
 
+   @SuppressWarnings({"rawtypes", "unchecked"})
    private void checkPreMaching(Class declaring) {
       if (declaring.isAnnotationPresent(PreMatching.class)) {
          LogMessages.LOGGER.warningPreMatchingSupport(declaring.getName());
@@ -57,9 +55,9 @@ public class ClientRequestFilterRegistry extends JaxrsInterceptorRegistry<Client
    }
 
    @Override
-   public ClientRequestFilterRegistry clone(ResteasyProviderFactory factory)
+   public ClientRequestFilterRegistryImpl clone(ResteasyProviderFactory factory)
    {
-      ClientRequestFilterRegistry clone = new ClientRequestFilterRegistry(factory);
+      ClientRequestFilterRegistryImpl clone = new ClientRequestFilterRegistryImpl(factory);
       clone.interceptors.addAll(interceptors);
       return clone;
    }

@@ -1,4 +1,4 @@
-package org.jboss.resteasy.core.interception.jaxrs;
+package org.jboss.resteasy.spi.interception;
 
 /**
  * Callback interface for when an interceptor registry changes

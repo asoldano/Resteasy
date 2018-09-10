@@ -2,12 +2,12 @@ package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.core.InjectorFactoryImpl;
 import org.jboss.resteasy.core.MediaTypeMap;
-import org.jboss.resteasy.core.interception.jaxrs.ClientRequestFilterRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.ClientResponseFilterRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.ContainerRequestFilterRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.ContainerResponseFilterRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.ReaderInterceptorRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.WriterInterceptorRegistry;
+import org.jboss.resteasy.core.interception.jaxrs.ClientRequestFilterRegistryImpl;
+import org.jboss.resteasy.core.interception.jaxrs.ClientResponseFilterRegistryImpl;
+import org.jboss.resteasy.core.interception.jaxrs.ContainerRequestFilterRegistryImpl;
+import org.jboss.resteasy.core.interception.jaxrs.ContainerResponseFilterRegistryImpl;
+import org.jboss.resteasy.core.interception.jaxrs.ReaderInterceptorRegistryImpl;
+import org.jboss.resteasy.core.interception.jaxrs.WriterInterceptorRegistryImpl;
 import org.jboss.resteasy.plugins.delegates.CacheControlDelegate;
 import org.jboss.resteasy.plugins.delegates.CookieHeaderDelegate;
 import org.jboss.resteasy.plugins.delegates.DateDelegate;
@@ -38,6 +38,7 @@ import org.jboss.resteasy.spi.LinkHeader;
 import org.jboss.resteasy.spi.PropertyInjector;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.StringParameterUnmarshaller;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 import org.jboss.resteasy.spi.metadata.ResourceBuilder;
 import org.jboss.resteasy.spi.metadata.ResourceClassProcessor;
 import org.jboss.resteasy.spi.util.PickConstructor;
@@ -233,14 +234,14 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    private Map<Class<?>, Class<? extends StringParameterUnmarshaller>> stringParameterUnmarshallers;
    protected Map<Class<?>, Map<Class<?>, Integer>> classContracts;
    private Map<Class<?>, HeaderDelegate> headerDelegates;
-   private ReaderInterceptorRegistry serverReaderInterceptorRegistry;
-   private WriterInterceptorRegistry serverWriterInterceptorRegistry;
-   private ContainerRequestFilterRegistry containerRequestFilterRegistry;
-   private ContainerResponseFilterRegistry containerResponseFilterRegistry;
-   private ClientRequestFilterRegistry clientRequestFilterRegistry;
-   private ClientResponseFilterRegistry clientResponseFilters;
-   private ReaderInterceptorRegistry clientReaderInterceptorRegistry;
-   private WriterInterceptorRegistry clientWriterInterceptorRegistry;
+   private JaxrsInterceptorRegistry<ReaderInterceptor> serverReaderInterceptorRegistry;
+   private JaxrsInterceptorRegistry<WriterInterceptor> serverWriterInterceptorRegistry;
+   private JaxrsInterceptorRegistry<ContainerRequestFilter> containerRequestFilterRegistry;
+   private JaxrsInterceptorRegistry<ContainerResponseFilter> containerResponseFilterRegistry;
+   private JaxrsInterceptorRegistry<ClientRequestFilter> clientRequestFilterRegistry;
+   private JaxrsInterceptorRegistry<ClientResponseFilter> clientResponseFilters;
+   private JaxrsInterceptorRegistry<ReaderInterceptor> clientReaderInterceptorRegistry;
+   private JaxrsInterceptorRegistry<WriterInterceptor> clientWriterInterceptorRegistry;
    private boolean builtinsRegistered = false;
    private boolean registerBuiltins = true;
    private InjectorFactory injectorFactory;
@@ -361,17 +362,17 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       injectorFactory = parent == null ? new InjectorFactoryImpl() : parent.getInjectorFactory();
    }
 
-   private void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
+   private void initializeRegistriesAndFilters(ResteasyProviderFactory parent)
    {
-      serverReaderInterceptorRegistry = parent == null ? new ReaderInterceptorRegistry(this) : parent.getServerReaderInterceptorRegistry().clone(this);
-      serverWriterInterceptorRegistry = parent == null ? new WriterInterceptorRegistry(this) : parent.getServerWriterInterceptorRegistry().clone(this);
-      containerRequestFilterRegistry = parent == null ? new ContainerRequestFilterRegistry(this) : parent.getContainerRequestFilterRegistry().clone(this);
-      containerResponseFilterRegistry = parent == null ? new ContainerResponseFilterRegistry(this) : parent.getContainerResponseFilterRegistry().clone(this);
+      serverReaderInterceptorRegistry = parent == null ? new ReaderInterceptorRegistryImpl(this) : parent.getServerReaderInterceptorRegistry().clone(this);
+      serverWriterInterceptorRegistry = parent == null ? new WriterInterceptorRegistryImpl(this) : parent.getServerWriterInterceptorRegistry().clone(this);
+      containerRequestFilterRegistry = parent == null ? new ContainerRequestFilterRegistryImpl(this) : parent.getContainerRequestFilterRegistry().clone(this);
+      containerResponseFilterRegistry = parent == null ? new ContainerResponseFilterRegistryImpl(this) : parent.getContainerResponseFilterRegistry().clone(this);
 
-      clientRequestFilterRegistry = parent == null ? new ClientRequestFilterRegistry(this) : parent.getClientRequestFilterRegistry().clone(this);
-      clientResponseFilters = parent == null ? new ClientResponseFilterRegistry(this) : parent.getClientResponseFilters().clone(this);
-      clientReaderInterceptorRegistry = parent == null ? new ReaderInterceptorRegistry(this) : parent.getClientReaderInterceptorRegistry().clone(this);
-      clientWriterInterceptorRegistry = parent == null ? new WriterInterceptorRegistry(this) : parent.getClientWriterInterceptorRegistry().clone(this);
+      clientRequestFilterRegistry = parent == null ? new ClientRequestFilterRegistryImpl(this) : parent.getClientRequestFilterRegistry().clone(this);
+      clientResponseFilters = parent == null ? new ClientResponseFilterRegistryImpl(this) : parent.getClientResponseFilters().clone(this);
+      clientReaderInterceptorRegistry = parent == null ? new ReaderInterceptorRegistryImpl(this) : parent.getClientReaderInterceptorRegistry().clone(this);
+      clientWriterInterceptorRegistry = parent == null ? new WriterInterceptorRegistryImpl(this) : parent.getClientWriterInterceptorRegistry().clone(this);
    }
 
    public Set<DynamicFeature> getServerDynamicFeatures()
@@ -600,56 +601,56 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       this.injectorFactory = injectorFactory;
    }
 
-   public ReaderInterceptorRegistry getServerReaderInterceptorRegistry()
+   public JaxrsInterceptorRegistry<ReaderInterceptor> getServerReaderInterceptorRegistry()
    {
       if (serverReaderInterceptorRegistry == null && parent != null)
          return parent.getServerReaderInterceptorRegistry();
       return serverReaderInterceptorRegistry;
    }
 
-   public WriterInterceptorRegistry getServerWriterInterceptorRegistry()
+   public JaxrsInterceptorRegistry<WriterInterceptor> getServerWriterInterceptorRegistry()
    {
       if (serverWriterInterceptorRegistry == null && parent != null)
          return parent.getServerWriterInterceptorRegistry();
       return serverWriterInterceptorRegistry;
    }
 
-   public ContainerRequestFilterRegistry getContainerRequestFilterRegistry()
+   public JaxrsInterceptorRegistry<ContainerRequestFilter> getContainerRequestFilterRegistry()
    {
       if (containerRequestFilterRegistry == null && parent != null)
          return parent.getContainerRequestFilterRegistry();
       return containerRequestFilterRegistry;
    }
 
-   public ContainerResponseFilterRegistry getContainerResponseFilterRegistry()
+   public JaxrsInterceptorRegistry<ContainerResponseFilter> getContainerResponseFilterRegistry()
    {
       if (containerResponseFilterRegistry == null && parent != null)
          return parent.getContainerResponseFilterRegistry();
       return containerResponseFilterRegistry;
    }
 
-   public ReaderInterceptorRegistry getClientReaderInterceptorRegistry()
+   public JaxrsInterceptorRegistry<ReaderInterceptor> getClientReaderInterceptorRegistry()
    {
       if (clientReaderInterceptorRegistry == null && parent != null)
          return parent.getClientReaderInterceptorRegistry();
       return clientReaderInterceptorRegistry;
    }
 
-   public WriterInterceptorRegistry getClientWriterInterceptorRegistry()
+   public JaxrsInterceptorRegistry<WriterInterceptor> getClientWriterInterceptorRegistry()
    {
       if (clientWriterInterceptorRegistry == null && parent != null)
          return parent.getClientWriterInterceptorRegistry();
       return clientWriterInterceptorRegistry;
    }
 
-   public ClientRequestFilterRegistry getClientRequestFilterRegistry()
+   public JaxrsInterceptorRegistry<ClientRequestFilter> getClientRequestFilterRegistry()
    {
       if (clientRequestFilterRegistry == null && parent != null)
          return parent.getClientRequestFilterRegistry();
       return clientRequestFilterRegistry;
    }
 
-   public ClientResponseFilterRegistry getClientResponseFilters()
+   public JaxrsInterceptorRegistry<ClientResponseFilter> getClientResponseFilters()
    {
       if (clientResponseFilters == null && parent != null)
          return parent.getClientResponseFilters();

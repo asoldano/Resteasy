@@ -287,7 +287,7 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
 
          if (paramMapping != null)
          {
-            ((ResteasyProviderFactoryImpl)providerFactory).getContainerRequestFilterRegistry().registerSingleton(new AcceptParameterHttpPreprocessor(paramMapping));
+            providerFactory.getContainerRequestFilterRegistry().registerSingleton(new AcceptParameterHttpPreprocessor(paramMapping));
          }
 
          AcceptHeaderByFileSuffixFilter suffixNegotiationFilter = null;
@@ -303,7 +303,7 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
             if (suffixNegotiationFilter == null)
             {
                suffixNegotiationFilter = new AcceptHeaderByFileSuffixFilter();
-               ((ResteasyProviderFactoryImpl)providerFactory).getContainerRequestFilterRegistry().registerSingleton(suffixNegotiationFilter);
+               providerFactory.getContainerRequestFilterRegistry().registerSingleton(suffixNegotiationFilter);
             }
             suffixNegotiationFilter.setMediaTypeMappings(extMap);
          }
@@ -314,7 +314,7 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
             if (suffixNegotiationFilter == null)
             {
                suffixNegotiationFilter = new AcceptHeaderByFileSuffixFilter();
-               ((ResteasyProviderFactoryImpl)providerFactory).getContainerRequestFilterRegistry().registerSingleton(suffixNegotiationFilter);
+               providerFactory.getContainerRequestFilterRegistry().registerSingleton(suffixNegotiationFilter);
             }
             suffixNegotiationFilter.setLanguageMappings(languageExtensions);
          }

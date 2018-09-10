@@ -10,9 +10,9 @@ import java.util.List;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class ClientResponseFilterRegistry extends JaxrsInterceptorRegistry<ClientResponseFilter>
+public class ClientResponseFilterRegistryImpl extends JaxrsInterceptorRegistryImpl<ClientResponseFilter>
 {
-   public ClientResponseFilterRegistry(ResteasyProviderFactory providerFactory)
+   public ClientResponseFilterRegistryImpl(ResteasyProviderFactory providerFactory)
    {
       super(providerFactory, ClientResponseFilter.class);
    }
@@ -25,9 +25,9 @@ public class ClientResponseFilterRegistry extends JaxrsInterceptorRegistry<Clien
    }
 
    @Override
-   public ClientResponseFilterRegistry clone(ResteasyProviderFactory factory)
+   public ClientResponseFilterRegistryImpl clone(ResteasyProviderFactory factory)
    {
-      ClientResponseFilterRegistry clone = new ClientResponseFilterRegistry(factory);
+      ClientResponseFilterRegistryImpl clone = new ClientResponseFilterRegistryImpl(factory);
       clone.interceptors.addAll(interceptors);
       return clone;
    }

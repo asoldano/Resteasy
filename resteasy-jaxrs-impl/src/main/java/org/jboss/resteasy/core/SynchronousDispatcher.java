@@ -48,7 +48,7 @@ import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class SynchronousDispatcher implements Dispatcher
 {
-   protected ResteasyProviderFactoryImpl providerFactory;
+   protected ResteasyProviderFactory providerFactory;
    protected Registry registry;
    protected List<HttpRequestPreprocessor> requestPreprocessors = new ArrayList<HttpRequestPreprocessor>();
    protected Map<Class, Object> defaultContextObjects = new HashMap<Class, Object>();
@@ -57,7 +57,7 @@ public class SynchronousDispatcher implements Dispatcher
    protected boolean bufferExceptionEntity = true;
    public SynchronousDispatcher(ResteasyProviderFactory providerFactory)
    {
-      this.providerFactory = (ResteasyProviderFactoryImpl)providerFactory;
+      this.providerFactory = providerFactory;
       this.registry = new ResourceMethodRegistry(providerFactory);
       defaultContextObjects.put(Providers.class, providerFactory);
       defaultContextObjects.put(Registry.class, registry);

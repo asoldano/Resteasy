@@ -1,8 +1,6 @@
 package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.annotations.Stream;
-import org.jboss.resteasy.core.interception.jaxrs.JaxrsInterceptorRegistry;
-import org.jboss.resteasy.core.interception.jaxrs.JaxrsInterceptorRegistryListener;
 import org.jboss.resteasy.core.interception.jaxrs.PostMatchContainerRequestContext;
 import org.jboss.resteasy.core.registry.SegmentNode;
 import org.jboss.resteasy.plugins.server.resourcefactory.SingletonResource;
@@ -21,6 +19,8 @@ import org.jboss.resteasy.spi.ResteasyAsynchronousResponse;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.UnhandledException;
 import org.jboss.resteasy.spi.ValueInjector;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistryListener;
 import org.jboss.resteasy.spi.metadata.MethodParameter;
 import org.jboss.resteasy.spi.metadata.Parameter;
 import org.jboss.resteasy.spi.metadata.ResourceMethod;
@@ -62,8 +62,8 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
    protected MethodInjector methodInjector;
    protected InjectorFactory injector;
    protected ResourceFactory resource;
-   protected ResteasyProviderFactoryImpl parentProviderFactory;
-   protected ResteasyProviderFactoryImpl resourceMethodProviderFactory;
+   protected ResteasyProviderFactory parentProviderFactory;
+   protected ResteasyProviderFactory resourceMethodProviderFactory;
    protected ResourceMethod method;
    protected Annotation[] methodAnnotations;
    protected ContainerRequestFilter[] requestFilters;
@@ -88,7 +88,7 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
    {
       this.injector = injector;
       this.resource = resource;
-      this.parentProviderFactory = (ResteasyProviderFactoryImpl)providerFactory;
+      this.parentProviderFactory = providerFactory;
       this.method = method;
       this.methodAnnotations = this.method.getAnnotatedMethod().getAnnotations();
 
@@ -124,9 +124,9 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
       writerInterceptors = resourceMethodProviderFactory.getServerWriterInterceptorRegistry().postMatch(method.getResourceClass().getClazz(), method.getAnnotatedMethod());
 
       // register with parent to listen for redeploy events
-      ((ResteasyProviderFactoryImpl)providerFactory).getContainerRequestFilterRegistry().getListeners().add(this);
-      ((ResteasyProviderFactoryImpl)providerFactory).getContainerResponseFilterRegistry().getListeners().add(this);
-      ((ResteasyProviderFactoryImpl)providerFactory).getServerWriterInterceptorRegistry().getListeners().add(this);
+      providerFactory.getContainerRequestFilterRegistry().getListeners().add(this);
+      providerFactory.getContainerResponseFilterRegistry().getListeners().add(this);
+      providerFactory.getServerWriterInterceptorRegistry().getListeners().add(this);
       ContextResolver<GeneralValidator> resolver = providerFactory.getContextResolver(GeneralValidator.class, MediaType.WILDCARD_TYPE);
       if (resolver != null)
       {

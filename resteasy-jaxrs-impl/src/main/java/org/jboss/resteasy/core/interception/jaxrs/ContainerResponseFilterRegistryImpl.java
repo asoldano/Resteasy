@@ -11,9 +11,9 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class ContainerResponseFilterRegistry extends JaxrsInterceptorRegistry<ContainerResponseFilter>
+public class ContainerResponseFilterRegistryImpl extends JaxrsInterceptorRegistryImpl<ContainerResponseFilter>
 {
-   public ContainerResponseFilterRegistry(ResteasyProviderFactory providerFactory)
+   public ContainerResponseFilterRegistryImpl(ResteasyProviderFactory providerFactory)
    {
       super(providerFactory, ContainerResponseFilter.class);
    }
@@ -25,9 +25,9 @@ public class ContainerResponseFilterRegistry extends JaxrsInterceptorRegistry<Co
 
    }
 
-   public ContainerResponseFilterRegistry clone(ResteasyProviderFactory factory)
+   public ContainerResponseFilterRegistryImpl clone(ResteasyProviderFactory factory)
    {
-      ContainerResponseFilterRegistry clone = new ContainerResponseFilterRegistry(factory);
+      ContainerResponseFilterRegistryImpl clone = new ContainerResponseFilterRegistryImpl(factory);
       clone.interceptors.addAll(interceptors);
       return clone;
    }
