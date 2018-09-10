@@ -10,7 +10,8 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
-import org.jboss.resteasy.util.HttpResponseCodes;
+
+import org.jboss.resteasy.spi.HttpResponseCodes;
 
 /**
  * (RESTEASY-1485) Thwart select XSS attack by escaping special chars in

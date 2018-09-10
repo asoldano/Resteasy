@@ -129,7 +129,7 @@ public class ServerResponseWriter
          }
          else
          {
-            writerInterceptors = providerFactory.getServerWriterInterceptorRegistry().postMatch(null, null);
+            writerInterceptors = ((ResteasyProviderFactoryImpl)providerFactory).getServerWriterInterceptorRegistry().postMatch(null, null);
          }
 
          AbstractWriterInterceptorContext writerContext =  new ServerWriterInterceptorContext(writerInterceptors,
@@ -202,7 +202,7 @@ public class ServerResponseWriter
       }
       else
       {
-         responseFilters = providerFactory.getContainerResponseFilterRegistry().postMatch(null, null);
+         responseFilters = ((ResteasyProviderFactoryImpl)providerFactory).getContainerResponseFilterRegistry().postMatch(null, null);
       }
 
       if (responseFilters != null)

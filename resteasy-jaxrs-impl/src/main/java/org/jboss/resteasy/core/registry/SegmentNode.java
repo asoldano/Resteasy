@@ -1,6 +1,5 @@
 package org.jboss.resteasy.core.registry;
 
-import org.jboss.resteasy.core.ResourceInvoker;
 import org.jboss.resteasy.core.ResourceLocatorInvoker;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
@@ -8,9 +7,10 @@ import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.DefaultOptionsMethodException;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.jboss.resteasy.spi.HttpResponseCodes;
+import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
 import org.jboss.resteasy.util.HttpHeaderNames;
-import org.jboss.resteasy.util.HttpResponseCodes;
 import org.jboss.resteasy.util.WeightedMediaType;
 
 import javax.ws.rs.NotAcceptableException;
@@ -76,7 +76,7 @@ public class SegmentNode
    {
       String path = ((ResteasyUriInfo) request.getUri()).getMatchingPath();
       RESTEasyTracingLogger logger = RESTEasyTracingLogger.getInstance(request);
-      logger.log("MATCH_PATH_FIND", request.getUri().getMatchingPath());
+      logger.log("MATCH_PATH_FIND", ((ResteasyUriInfo)request.getUri()).getMatchingPath());
 
       if (start < path.length() && path.charAt(start) == '/') start++;
       List<MethodExpression> potentials = new ArrayList<MethodExpression>();

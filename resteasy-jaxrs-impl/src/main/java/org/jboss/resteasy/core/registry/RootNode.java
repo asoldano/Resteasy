@@ -1,8 +1,8 @@
 package org.jboss.resteasy.core.registry;
 
-import org.jboss.resteasy.core.ResourceInvoker;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.jboss.resteasy.spi.ResourceInvoker;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -91,7 +91,6 @@ public class RootNode
             return expression;
          }
       }
-      String expression = null;
       MethodExpression exp;
       //Matcher param = PathHelper.URI_PARAM_PATTERN.matcher(path);
       int expidx = path.indexOf('{');

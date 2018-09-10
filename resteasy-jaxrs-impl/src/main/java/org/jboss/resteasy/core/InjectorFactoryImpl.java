@@ -12,7 +12,7 @@ import org.jboss.resteasy.spi.metadata.Parameter;
 import org.jboss.resteasy.spi.metadata.ResourceClass;
 import org.jboss.resteasy.spi.metadata.ResourceConstructor;
 import org.jboss.resteasy.spi.metadata.ResourceLocator;
-import org.jboss.resteasy.util.Types;
+import org.jboss.resteasy.spi.util.Types;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.CookieParam;
@@ -33,13 +33,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.resteasy.util.FindAnnotation.findAnnotation;
+import static org.jboss.resteasy.spi.util.FindAnnotation.findAnnotation;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class InjectorFactoryImpl implements InjectorFactory
 {
    @Override
@@ -72,7 +72,6 @@ public class InjectorFactoryImpl implements InjectorFactory
       return new MethodInjectorImpl(method, factory);
    }
 
-   @SuppressWarnings("deprecation")
    @Override
    public ValueInjector createParameterExtractor(Parameter parameter, ResteasyProviderFactory providerFactory)
    {
@@ -134,7 +133,6 @@ public class InjectorFactoryImpl implements InjectorFactory
       return createParameterExtractor(injectTargetClass, injectTarget, defaultName, type, genericType, annotations, true, providerFactory);
    }
 
-   @SuppressWarnings("deprecation")
    @Override
    public ValueInjector createParameterExtractor(Class injectTargetClass, AccessibleObject injectTarget, String defaultName, Class type, Type genericType, Annotation[] annotations, boolean useDefault, ResteasyProviderFactory providerFactory)
    {
@@ -150,9 +148,6 @@ public class InjectorFactoryImpl implements InjectorFactory
       CookieParam cookie;
       FormParam formParam;
       Form form;
-      Suspended suspended;
-      Query query;
-
 
       if ((queryParam = findAnnotation(annotations, QueryParam.class)) != null)
       {
@@ -162,7 +157,7 @@ public class InjectorFactoryImpl implements InjectorFactory
       {
          return new QueryParamInjector(type, genericType, injectTarget, defaultName, defaultVal, encode, annotations, providerFactory);
       }
-      else if((query = findAnnotation(annotations, Query.class)) != null) {
+      else if (findAnnotation(annotations, Query.class) != null) {
          return new QueryInjector(type, providerFactory);
       }
       else if ((header = findAnnotation(annotations, HeaderParam.class)) != null)
@@ -234,7 +229,7 @@ public class InjectorFactoryImpl implements InjectorFactory
       {
          return new ContextParameterInjector(null, type, genericType, annotations, providerFactory);
       }
-      else if ((suspended = findAnnotation(annotations, Suspended.class)) != null)
+      else if (findAnnotation(annotations, Suspended.class) != null)
       {
          return new AsynchronousResponseInjector();
       }

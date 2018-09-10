@@ -26,6 +26,7 @@ import org.jboss.resteasy.specimpl.BuiltResponse;
 import org.jboss.resteasy.specimpl.MultivaluedTreeMap;
 import org.jboss.resteasy.spi.AsyncResponseProvider;
 import org.jboss.resteasy.spi.AsyncStreamProvider;
+import org.jboss.resteasy.spi.Dispatcher;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyAsynchronousResponse;
@@ -165,7 +166,6 @@ public abstract class AsyncResponseConsumer
    protected BuiltResponse createResponse(Object entity, HttpRequest httpRequest)
    {
       BuiltResponse builtResponse = null;
-      MediaType mediaType = null;
       if (entity == null)
       {
          builtResponse = (BuiltResponse) Response.noContent().build();

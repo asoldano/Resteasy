@@ -10,6 +10,7 @@ import org.jboss.resteasy.spi.InjectorFactory;
 import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jboss.resteasy.spi.MethodInjector;
 import org.jboss.resteasy.spi.ResourceFactory;
+import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.metadata.ResourceLocator;
 import org.jboss.resteasy.util.GetRestful;
@@ -52,7 +53,7 @@ public class ResourceLocatorInvoker implements ResourceInvoker
 
    protected CompletionStage<Object> createResource(HttpRequest request, HttpResponse response, Object locator)
    {
-      ResteasyUriInfo uriInfo = request.getUri();
+      ResteasyUriInfo uriInfo = (ResteasyUriInfo)request.getUri();
       RuntimeException lastException = (RuntimeException)request.getAttribute(ResourceMethodRegistry.REGISTRY_MATCHING_EXCEPTION);
       return methodInjector.injectArguments(request, response)
          .exceptionally(t -> {

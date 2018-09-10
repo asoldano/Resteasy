@@ -34,6 +34,7 @@ import org.jboss.resteasy.spi.HttpRequestPreprocessor;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jboss.resteasy.spi.Registry;
+import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.spi.ResteasyAsynchronousContext;
 import org.jboss.resteasy.spi.ResteasyConfiguration;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
@@ -44,10 +45,10 @@ import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class SynchronousDispatcher implements Dispatcher
 {
-   protected ResteasyProviderFactory providerFactory;
+   protected ResteasyProviderFactoryImpl providerFactory;
    protected Registry registry;
    protected List<HttpRequestPreprocessor> requestPreprocessors = new ArrayList<HttpRequestPreprocessor>();
    protected Map<Class, Object> defaultContextObjects = new HashMap<Class, Object>();
@@ -56,7 +57,7 @@ public class SynchronousDispatcher implements Dispatcher
    protected boolean bufferExceptionEntity = true;
    public SynchronousDispatcher(ResteasyProviderFactory providerFactory)
    {
-      this.providerFactory = providerFactory;
+      this.providerFactory = (ResteasyProviderFactoryImpl)providerFactory;
       this.registry = new ResourceMethodRegistry(providerFactory);
       defaultContextObjects.put(Providers.class, providerFactory);
       defaultContextObjects.put(Registry.class, registry);

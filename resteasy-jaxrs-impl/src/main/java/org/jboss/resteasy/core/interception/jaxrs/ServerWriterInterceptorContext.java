@@ -1,6 +1,7 @@
 package org.jboss.resteasy.core.interception.jaxrs;
 
 import org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure;
+import org.jboss.resteasy.core.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
@@ -21,6 +22,7 @@ import java.util.Enumeration;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
+@SuppressWarnings("rawtypes")
 public class ServerWriterInterceptorContext extends AbstractWriterInterceptorContext
 {
    private HttpRequest request;
@@ -40,7 +42,7 @@ public class ServerWriterInterceptorContext extends AbstractWriterInterceptorCon
    @Override
    protected MessageBodyWriter resolveWriter()
    {
-      return providerFactory.getServerMessageBodyWriter(
+      return ((ResteasyProviderFactoryImpl)providerFactory).getServerMessageBodyWriter(
               type, genericType, annotations, mediaType, tracingLogger);
 
    }
@@ -59,7 +61,6 @@ public class ServerWriterInterceptorContext extends AbstractWriterInterceptorCon
    @Override
    protected void writeTo(MessageBodyWriter writer) throws IOException
    {
-      //logger.info("*** " + request.getUri().getPath() + " writeTo(" + entity.toString() + ", " + mediaType);
       super.writeTo(writer);
    }
 

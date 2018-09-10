@@ -7,7 +7,7 @@ import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.ValueInjector;
-import org.jboss.resteasy.util.Types;
+import org.jboss.resteasy.spi.util.Types;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PathParam;
@@ -25,19 +25,18 @@ import java.util.concurrent.CompletionStage;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
+@SuppressWarnings("rawtypes")
 public class PathParamInjector implements ValueInjector
 {
    private StringParameterInjector extractor;
    private String paramName;
    private boolean encode;
-   private Class type;
-   private boolean pathSegment = false;
+//   private boolean pathSegment = false;
    private boolean pathSegmentArray = false;
    private boolean pathSegmentList = false;
 
    public PathParamInjector(Class type, Type genericType, AccessibleObject target, String paramName, String defaultValue, boolean encode, Annotation[] annotations, ResteasyProviderFactory factory)
    {
-      this.type = type;
       if (isPathSegmentArray(type))
       {
          pathSegmentArray = true;
@@ -48,7 +47,7 @@ public class PathParamInjector implements ValueInjector
       }
       else if (type.equals(PathSegment.class))
       {
-         pathSegment = true;
+//         pathSegment = true;
       }
       else
       {

@@ -1,7 +1,7 @@
 package org.jboss.resteasy.core;
 
+import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.jboss.resteasy.spi.LoggableFailure;
-import org.jboss.resteasy.util.HttpResponseCodes;
 
 import javax.ws.rs.core.MediaType;
 
@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 public class NoMessageBodyWriterFoundFailure extends LoggableFailure
 {
 
-   public NoMessageBodyWriterFoundFailure(Class type, MediaType contentType)
+   public NoMessageBodyWriterFoundFailure(@SuppressWarnings("rawtypes") Class type, MediaType contentType)
    {
       super(
               String

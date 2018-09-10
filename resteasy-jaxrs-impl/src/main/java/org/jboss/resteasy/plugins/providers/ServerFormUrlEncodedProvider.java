@@ -2,7 +2,7 @@ package org.jboss.resteasy.plugins.providers;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.util.FindAnnotation;
+import org.jboss.resteasy.spi.util.FindAnnotation;
 
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.Consumes;
@@ -37,6 +37,7 @@ public class ServerFormUrlEncodedProvider extends FormUrlEncodedProvider
    HttpRequest request;
 
 
+   @SuppressWarnings("rawtypes")
    @Override
    public MultivaluedMap readFrom(Class<MultivaluedMap> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException
    {

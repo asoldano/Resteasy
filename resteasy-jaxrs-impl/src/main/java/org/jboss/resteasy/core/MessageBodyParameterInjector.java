@@ -37,7 +37,7 @@ import org.jboss.resteasy.util.InputStreamToByteArray;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class MessageBodyParameterInjector implements ValueInjector, JaxrsInterceptorRegistryListener
 {
    private static ThreadLocalStack<Object> bodyStack = new ThreadLocalStack<Object>();
@@ -70,7 +70,7 @@ public class MessageBodyParameterInjector implements ValueInjector, JaxrsInterce
    private Class type;
    private Type genericType;
    private Annotation[] annotations;
-   private ResteasyProviderFactory factory;
+   private ResteasyProviderFactoryImpl factory;
    private Class declaringClass;
    private AccessibleObject target;
    private ReaderInterceptor[] interceptors;
@@ -78,7 +78,7 @@ public class MessageBodyParameterInjector implements ValueInjector, JaxrsInterce
 
    public MessageBodyParameterInjector(Class declaringClass, AccessibleObject target, Class type, Type genericType, Annotation[] annotations, ResteasyProviderFactory factory)
    {
-      this.factory = factory;
+      this.factory = (ResteasyProviderFactoryImpl)factory;
       this.target = target;
       this.declaringClass = declaringClass;
 
@@ -99,12 +99,12 @@ public class MessageBodyParameterInjector implements ValueInjector, JaxrsInterce
          this.genericType = genericType;
       }
       this.annotations = annotations;
-      this.interceptors = factory
+      this.interceptors = this.factory
               .getServerReaderInterceptorRegistry().postMatch(
                       this.declaringClass, this.target);
 
       // this is for when an interceptor is added after the creation of the injector
-      factory.getServerReaderInterceptorRegistry().getListeners().add(this);
+      this.factory.getServerReaderInterceptorRegistry().getListeners().add(this);
    }
 
    public void registryUpdated(JaxrsInterceptorRegistry registry)

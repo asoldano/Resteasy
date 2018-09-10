@@ -1,6 +1,7 @@
 package org.jboss.resteasy.util;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.jboss.resteasy.spi.LoggableFailure;
 
 import javax.ws.rs.Consumes;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
+@SuppressWarnings(value = "rawtypes")
 public class MediaTypeHelper
 {
    private static final MediaTypeComparator COMPARATOR = new MediaTypeComparator();

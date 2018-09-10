@@ -1,8 +1,10 @@
 package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.core.registry.RootNode;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.InjectorFactory;
+import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.metadata.ResourceBuilder;
 import org.jboss.resteasy.spi.metadata.ResourceClass;
@@ -72,7 +74,7 @@ public class LocatorRegistry
    {
       try
       {
-         String currentUri = request.getUri().getEncodedMatchedPaths().get(0);
+         String currentUri = ((ResteasyUriInfo)request.getUri()).getEncodedMatchedPaths().get(0);
          int startAt = currentUri.length();
          return root.match(request, startAt);
       }

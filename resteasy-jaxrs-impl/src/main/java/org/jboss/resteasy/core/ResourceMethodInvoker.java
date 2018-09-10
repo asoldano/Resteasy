@@ -16,6 +16,7 @@ import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.InjectorFactory;
 import org.jboss.resteasy.spi.MethodInjector;
 import org.jboss.resteasy.spi.ResourceFactory;
+import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.spi.ResteasyAsynchronousResponse;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.UnhandledException;
@@ -61,8 +62,8 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
    protected MethodInjector methodInjector;
    protected InjectorFactory injector;
    protected ResourceFactory resource;
-   protected ResteasyProviderFactory parentProviderFactory;
-   protected ResteasyProviderFactory resourceMethodProviderFactory;
+   protected ResteasyProviderFactoryImpl parentProviderFactory;
+   protected ResteasyProviderFactoryImpl resourceMethodProviderFactory;
    protected ResourceMethod method;
    protected Annotation[] methodAnnotations;
    protected ContainerRequestFilter[] requestFilters;
@@ -87,7 +88,7 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
    {
       this.injector = injector;
       this.resource = resource;
-      this.parentProviderFactory = providerFactory;
+      this.parentProviderFactory = (ResteasyProviderFactoryImpl)providerFactory;
       this.method = method;
       this.methodAnnotations = this.method.getAnnotatedMethod().getAnnotations();
 
@@ -106,7 +107,7 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
          }
       };
 
-      this.resourceMethodProviderFactory = new ResteasyProviderFactory(providerFactory);
+      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(providerFactory);
       for (DynamicFeature feature : providerFactory.getServerDynamicFeatures())
       {
          feature.configure(resourceInfo, new FeatureContextDelegate(resourceMethodProviderFactory));
@@ -123,9 +124,9 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
       writerInterceptors = resourceMethodProviderFactory.getServerWriterInterceptorRegistry().postMatch(method.getResourceClass().getClazz(), method.getAnnotatedMethod());
 
       // register with parent to listen for redeploy events
-      providerFactory.getContainerRequestFilterRegistry().getListeners().add(this);
-      providerFactory.getContainerResponseFilterRegistry().getListeners().add(this);
-      providerFactory.getServerWriterInterceptorRegistry().getListeners().add(this);
+      ((ResteasyProviderFactoryImpl)providerFactory).getContainerRequestFilterRegistry().getListeners().add(this);
+      ((ResteasyProviderFactoryImpl)providerFactory).getContainerResponseFilterRegistry().getListeners().add(this);
+      ((ResteasyProviderFactoryImpl)providerFactory).getServerWriterInterceptorRegistry().getListeners().add(this);
       ContextResolver<GeneralValidator> resolver = providerFactory.getContextResolver(GeneralValidator.class, MediaType.WILDCARD_TYPE);
       if (resolver != null)
       {
@@ -222,7 +223,7 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
 
    public void registryUpdated(JaxrsInterceptorRegistry registry)
    {
-      this.resourceMethodProviderFactory = new ResteasyProviderFactory(parentProviderFactory);
+      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(parentProviderFactory);
       for (DynamicFeature feature : parentProviderFactory.getServerDynamicFeatures())
       {
          feature.configure(resourceInfo, new FeatureContextDelegate(resourceMethodProviderFactory));
@@ -565,7 +566,9 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
       asyncResponse.setAnnotations(method.getAnnotatedMethod().getAnnotations());
       asyncResponse.setWriterInterceptors(writerInterceptors);
       asyncResponse.setResponseFilters(responseFilters);
-      asyncResponse.setMethod(this);
+      if (asyncResponse instanceof ResourceMethodInvokerAwareResponse) {
+         ((ResourceMethodInvokerAwareResponse)asyncResponse).setMethod(this);
+      }
    }
 
    public boolean doesProduce(List<? extends MediaType> accepts)

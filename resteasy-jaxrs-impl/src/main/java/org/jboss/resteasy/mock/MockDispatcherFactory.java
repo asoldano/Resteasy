@@ -1,8 +1,9 @@
 package org.jboss.resteasy.mock;
 
-import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.core.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
+import org.jboss.resteasy.spi.Dispatcher;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 /**
@@ -16,7 +17,7 @@ public class MockDispatcherFactory
 
    public static Dispatcher createDispatcher()
    {
-      Dispatcher dispatcher = new SynchronousDispatcher(new ResteasyProviderFactory());
+      Dispatcher dispatcher = new SynchronousDispatcher(new ResteasyProviderFactoryImpl());
       ResteasyProviderFactory.setInstance(dispatcher.getProviderFactory());
       RegisterBuiltin.register(dispatcher.getProviderFactory());
       return dispatcher;

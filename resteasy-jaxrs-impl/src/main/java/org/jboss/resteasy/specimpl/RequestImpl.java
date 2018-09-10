@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.jboss.resteasy.resteasy_jaxrs.i18n.Messages.MESSAGES;
 import static org.jboss.resteasy.util.HttpHeaderNames.*;
-import static org.jboss.resteasy.util.HttpResponseCodes.SC_PRECONDITION_FAILED;
+import static org.jboss.resteasy.spi.HttpResponseCodes.SC_PRECONDITION_FAILED;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>

@@ -5,7 +5,6 @@ package org.jboss.resteasy.plugins.providers;
 
 import org.jboss.resteasy.annotations.providers.img.ImageWriterParams;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
-import org.jboss.resteasy.util.FindAnnotation;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -187,7 +186,7 @@ public class IIOImageProvider extends AbstractEntityProvider<IIOImage>
       * If the image output type supports compression, set it to the highest
       * maximum
       */
-      ImageWriterParams writerParams = FindAnnotation.findAnnotation(annotations,
+      ImageWriterParams writerParams = org.jboss.resteasy.spi.util.FindAnnotation.findAnnotation(annotations,
               ImageWriterParams.class);
       if (writerParams != null)
       {

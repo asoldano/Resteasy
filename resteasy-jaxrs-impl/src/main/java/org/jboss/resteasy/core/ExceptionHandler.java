@@ -4,13 +4,13 @@ import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.spi.ApplicationException;
 import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.jboss.resteasy.spi.ReaderException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.UnhandledException;
 import org.jboss.resteasy.spi.WriterException;
 import org.jboss.resteasy.tracing.RESTEasyTracingLogger;
-import org.jboss.resteasy.util.HttpResponseCodes;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
@@ -27,13 +27,13 @@ import java.util.Set;
  */
 public class ExceptionHandler
 {
-   protected ResteasyProviderFactory providerFactory;
+   protected ResteasyProviderFactoryImpl providerFactory;
    protected Set<String> unwrappedExceptions = new HashSet<String>();
    protected boolean mapperExecuted;
 
    public ExceptionHandler(ResteasyProviderFactory providerFactory, Set<String> unwrappedExceptions)
    {
-      this.providerFactory = providerFactory;
+      this.providerFactory = (ResteasyProviderFactoryImpl)providerFactory;
       this.unwrappedExceptions = unwrappedExceptions;
    }
 

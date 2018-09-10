@@ -9,8 +9,8 @@ import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jboss.resteasy.spi.PropertyInjector;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.ValueInjector;
-import org.jboss.resteasy.util.FindAnnotation;
-import org.jboss.resteasy.util.MethodHashing;
+import org.jboss.resteasy.spi.util.FindAnnotation;
+import org.jboss.resteasy.spi.util.MethodHashing;
 
 import java.beans.Introspector;
 import java.lang.annotation.Annotation;

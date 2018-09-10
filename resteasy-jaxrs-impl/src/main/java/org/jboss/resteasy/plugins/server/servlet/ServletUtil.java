@@ -2,7 +2,7 @@ package org.jboss.resteasy.plugins.server.servlet;
 
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.specimpl.ResteasyHttpHeaders;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.util.HttpHeaderNames;
 import org.jboss.resteasy.util.MediaTypeHelper;
 
@@ -95,7 +95,6 @@ public class ServletUtil
       return acceptable;
    }
 
-   @SuppressWarnings("unchecked")
    public static MultivaluedMap<String, String> extractRequestHeaders(HttpServletRequest request)
    {
       Headers<String> requestHeaders = new Headers<String>();
