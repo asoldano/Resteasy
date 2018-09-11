@@ -2,7 +2,7 @@ package org.jboss.resteasy.test;
 
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
-import org.jboss.resteasy.util.HttpResponseCodes;
+import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
