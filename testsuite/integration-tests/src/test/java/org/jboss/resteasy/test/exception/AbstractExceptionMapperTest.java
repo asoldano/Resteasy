@@ -8,7 +8,7 @@ import org.jboss.resteasy.test.exception.resource.AbstractMapperDefault;
 import org.jboss.resteasy.test.exception.resource.AbstractMapperException;
 import org.jboss.resteasy.test.exception.resource.AbstractMapperMyCustom;
 import org.jboss.resteasy.test.exception.resource.AbstractMapperResource;
-import org.jboss.resteasy.util.HttpResponseCodes;
+import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.jboss.resteasy.util.Types;
 import org.jboss.resteasy.utils.PermissionUtil;
 import org.jboss.resteasy.utils.PortProviderUtil;

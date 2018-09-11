@@ -18,7 +18,7 @@ import org.jboss.resteasy.test.crypto.resource.CryptoEncryptedResource;
 import org.jboss.resteasy.test.crypto.resource.CryptoEncryptedSignedResource;
 import org.jboss.resteasy.test.crypto.resource.CryptoPkcs7SignedResource;
 import org.jboss.resteasy.test.crypto.resource.CryptoSignedResource;
-import org.jboss.resteasy.util.HttpResponseCodes;
+import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.jboss.resteasy.utils.PortProviderUtil;
 import org.jboss.resteasy.utils.TestUtil;
 import org.jboss.shrinkwrap.api.Archive;

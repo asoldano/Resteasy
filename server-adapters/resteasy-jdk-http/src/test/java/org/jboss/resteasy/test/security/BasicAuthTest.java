@@ -41,7 +41,7 @@ import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.plugins.server.embedded.SimpleSecurityDomain;
 import org.jboss.resteasy.plugins.server.sun.http.HttpServerContainer;
 import org.jboss.resteasy.test.TestPortProvider;
-import org.jboss.resteasy.util.HttpResponseCodes;
+import org.jboss.resteasy.spi.HttpResponseCodes;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
