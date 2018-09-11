@@ -11,13 +11,14 @@ import org.jboss.resteasy.plugins.server.resourcefactory.POJOResourceFactory;
 import org.jboss.resteasy.plugins.server.resourcefactory.SingletonResource;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
-import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
+import org.jboss.resteasy.specimpl.ResteasyUriBuilderImpl;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.InjectorFactory;
 import org.jboss.resteasy.spi.Registry;
 import org.jboss.resteasy.spi.ResourceFactory;
 import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.ResteasyUriBuilder;
 import org.jboss.resteasy.spi.metadata.ResourceBuilder;
 import org.jboss.resteasy.spi.metadata.ResourceClass;
 import org.jboss.resteasy.spi.metadata.ResourceLocator;
@@ -331,7 +332,7 @@ public class ResourceMethodRegistry implements Registry
 
    protected void processMethod(ResourceFactory rf, String base, ResourceLocator method)
    {
-      ResteasyUriBuilder builder = new ResteasyUriBuilder();
+      ResteasyUriBuilder builder = new ResteasyUriBuilderImpl();
       if (base != null)
          builder.path(base);
       builder.path(method.getFullpath());
@@ -339,7 +340,7 @@ public class ResourceMethodRegistry implements Registry
       if (fullpath == null)
          fullpath = "";
 
-      builder = new ResteasyUriBuilder();
+      builder = new ResteasyUriBuilderImpl();
       if (base != null)
          builder.path(base);
       builder.path(method.getResourceClass().getPath());
@@ -403,7 +404,7 @@ public class ResourceMethodRegistry implements Registry
          Set<String> httpMethods = IsHttpMethod.getHttpMethods(method);
          if (path == null && httpMethods == null) continue;
 
-         ResteasyUriBuilder builder = new ResteasyUriBuilder();
+         ResteasyUriBuilder builder = new ResteasyUriBuilderImpl();
          if (base != null) builder.path(base);
          if (clazz.isAnnotationPresent(Path.class)) builder.path(clazz);
          String classExpression = builder.getPath();

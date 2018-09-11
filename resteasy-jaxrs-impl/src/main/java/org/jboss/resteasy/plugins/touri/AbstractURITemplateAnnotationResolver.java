@@ -1,7 +1,7 @@
 package org.jboss.resteasy.plugins.touri;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
-import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
+import org.jboss.resteasy.spi.ResteasyUriBuilder;
 import org.jboss.resteasy.spi.touri.URIResolver;
 import org.jboss.resteasy.util.AnnotationResolver;
 
@@ -21,7 +21,7 @@ public abstract class AbstractURITemplateAnnotationResolver implements
         URIResolver
 {
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings("rawtypes")
    public boolean handles(Class type)
    {
       return AnnotationResolver.getClassWithAnnotation(type, getAnnotationType()) != null;

@@ -7,6 +7,7 @@ import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.ResteasyUriBuilder;
 import org.jboss.resteasy.spi.util.MethodHashing;
 import org.jboss.resteasy.spi.util.PickConstructor;
 import org.jboss.resteasy.spi.util.Types;
@@ -28,7 +29,6 @@ import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import java.lang.annotation.Annotation;
@@ -531,10 +531,10 @@ public class ResourceBuilder
 
       public ResourceClassBuilder buildMethod()
       {
-         UriBuilder builder = RuntimeDelegate.getInstance().createUriBuilder();
+         ResteasyUriBuilder builder = (ResteasyUriBuilder)RuntimeDelegate.getInstance().createUriBuilder();
          if (locator.resourceClass.getPath() != null) builder.path(locator.resourceClass.getPath());
          if (locator.path != null) builder.path(locator.path);
-         String pathExpression = builder.build().getPath();
+         String pathExpression = builder.getPath();
          if (pathExpression == null)
             pathExpression = "";
          locator.fullpath = pathExpression;
@@ -673,10 +673,10 @@ public class ResourceBuilder
 
       public ResourceClassBuilder buildMethod()
       {
-         UriBuilder builder = RuntimeDelegate.getInstance().createUriBuilder();
+         ResteasyUriBuilder builder = (ResteasyUriBuilder)RuntimeDelegate.getInstance().createUriBuilder();
          if (method.resourceClass.getPath() != null) builder.path(method.resourceClass.getPath());
          if (method.path != null) builder.path(method.path);
-         String pathExpression = builder.build().getPath();
+         String pathExpression = builder.getPath();
          if (pathExpression == null)
             pathExpression = "";
          method.fullpath = pathExpression;

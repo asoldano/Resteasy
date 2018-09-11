@@ -1,6 +1,7 @@
 package org.jboss.resteasy.specimpl;
 
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.spi.ResteasyUriBuilder;
 import org.jboss.resteasy.util.Encode;
 import org.jboss.resteasy.util.PathHelper;
 
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-public class ResteasyUriBuilder extends UriBuilder
+public class ResteasyUriBuilderImpl extends ResteasyUriBuilder
 {
 	
 	private static final class URITemplateParametersMap extends HashMap<String, Object> {
@@ -69,10 +70,10 @@ public class ResteasyUriBuilder extends UriBuilder
    private String ssp;
    private String authority;
 
-
+   @Override
    public UriBuilder clone()
    {
-      ResteasyUriBuilder impl = new ResteasyUriBuilder();
+      ResteasyUriBuilderImpl impl = new ResteasyUriBuilderImpl();
       impl.host = host;
       impl.scheme = scheme;
       impl.port = port;
@@ -86,67 +87,16 @@ public class ResteasyUriBuilder extends UriBuilder
       return impl;
    }
 
-   public static final Pattern opaqueUri = Pattern.compile("^([^:/?#{]+):([^/].*)");
-   public static final Pattern hierarchicalUri = Pattern.compile("^(([^:/?#{]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
    private static final Pattern hostPortPattern = Pattern.compile("([^/:]+):(\\d+)");
    private static final Pattern squareHostBrackets = Pattern.compile( "(\\[(([0-9A-Fa-f]{0,4}:){2,7})([0-9A-Fa-f]{0,4})%?.*\\]):(\\d+)" );
 
-   public static boolean compare(String s1, String s2)
-   {
-      if (s1 == s2) return true;
-      if (s1 == null || s2 == null) return false;
-      return s1.equals(s2);
-   }
-
-   public static URI relativize(URI from, URI to)
-   {
-      if (!compare(from.getScheme(), to.getScheme())) return to;
-      if (!compare(from.getHost(), to.getHost())) return to;
-      if (from.getPort() != to.getPort()) return to;
-      if (from.getPath() == null && to.getPath() == null) return URI.create("");
-      else if (from.getPath() == null) return URI.create(to.getPath());
-      else if (to.getPath() == null) return to;
-
-
-      String fromPath = from.getPath();
-      if (fromPath.startsWith("/")) fromPath = fromPath.substring(1);
-      String[] fsplit = fromPath.split("/");
-      String toPath = to.getPath();
-      if (toPath.startsWith("/")) toPath = toPath.substring(1);
-      String[] tsplit = toPath.split("/");
-
-      int f = 0;
-
-      for (;f < fsplit.length && f < tsplit.length; f++)
-      {
-         if (!fsplit[f].equals(tsplit[f])) break;
-      }
-
-      UriBuilder builder = UriBuilder.fromPath("");
-      for (int i = f; i < fsplit.length; i++) builder.path("..");
-      for (int i = f; i < tsplit.length; i++) builder.path(tsplit[i]);
-      return builder.build();
-   }
-
    /**
     * You may put path parameters anywhere within the uriTemplate except port.
     *
     * @param uriTemplate uri template
     * @return uri builder
     */
-   public static UriBuilder fromTemplate(String uriTemplate)
-   {
-      ResteasyUriBuilder impl = new ResteasyUriBuilder();
-      impl.uriTemplate(uriTemplate);
-      return impl;
-   }
-
-   /**
-    * You may put path parameters anywhere within the uriTemplate except port.
-    *
-    * @param uriTemplate uri template
-    * @return uri builder
-    */
+   @Override
    public UriBuilder uriTemplate(CharSequence uriTemplate)
    {
       if (uriTemplate == null) throw new IllegalArgumentException(Messages.MESSAGES.uriTemplateParameterNull());
@@ -195,7 +145,6 @@ public class ResteasyUriBuilder extends UriBuilder
          if (hostPortMatch.matches())
          {
             this.host = hostPortMatch.group(1);
-            int val = 0;
             try
             {
                this.port = Integer.parseInt(hostPortMatch.group(2));
@@ -244,6 +193,7 @@ public class ResteasyUriBuilder extends UriBuilder
       return uriTemplate(uriTemplate);
    }
 
+   @Override
    public UriBuilder uriFromCharSequence(CharSequence uriTemplate) throws IllegalArgumentException
    {
       return uriTemplate(uriTemplate);
@@ -434,7 +384,6 @@ public class ResteasyUriBuilder extends UriBuilder
       return this;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public UriBuilder path(Class resource, String method) throws IllegalArgumentException
    {
@@ -529,6 +478,7 @@ public class ResteasyUriBuilder extends UriBuilder
     * @param isEncoded encoded flag
     * @return uri builder
     */
+   @Override
    public UriBuilder substitutePathParam(String name, Object value, boolean isEncoded)
    {
       if (path != null)
@@ -764,6 +714,7 @@ public class ResteasyUriBuilder extends UriBuilder
     *
     * @return list of path parameters
     */
+   @Override
    public List<String> getPathParamNamesInDeclarationOrder()
    {
       List<String> params = new ArrayList<String>();
@@ -953,6 +904,7 @@ public class ResteasyUriBuilder extends UriBuilder
     * @param value the value of the query parameter.
     * @return Returns this instance to allow call chaining.
     */
+   @Override
    public UriBuilder clientQueryParam(String name, Object value) throws IllegalArgumentException
    {
       if (name == null) throw new IllegalArgumentException(Messages.MESSAGES.nameParameterNull());
@@ -1015,36 +967,43 @@ public class ResteasyUriBuilder extends UriBuilder
       return queryParam(name, values);
    }
 
+   @Override
    public String getHost()
    {
       return host;
    }
 
+   @Override
    public String getScheme()
    {
       return scheme;
    }
 
+   @Override
    public int getPort()
    {
       return port;
    }
 
+   @Override
    public String getUserInfo()
    {
       return userInfo;
    }
 
+   @Override
    public String getPath()
    {
       return path;
    }
 
+   @Override
    public String getQuery()
    {
       return query;
    }
 
+   @Override
    public String getFragment()
    {
       return fragment;

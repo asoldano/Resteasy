@@ -13,9 +13,9 @@ import org.jboss.resteasy.links.RESTServiceDiscovery;
 import org.jboss.resteasy.links.ResourceFacade;
 import org.jboss.resteasy.links.i18n.LogMessages;
 import org.jboss.resteasy.links.i18n.Messages;
-import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.jboss.resteasy.util.FindAnnotation;
+import org.jboss.resteasy.spi.ResteasyUriBuilder;
+import org.jboss.resteasy.spi.util.FindAnnotation;
 
 import javax.annotation.security.RolesAllowed;
 import javax.el.ELContext;

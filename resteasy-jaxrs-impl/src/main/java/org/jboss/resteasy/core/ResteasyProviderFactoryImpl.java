@@ -23,7 +23,7 @@ import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.specimpl.LinkBuilderImpl;
 import org.jboss.resteasy.specimpl.ResponseBuilderImpl;
-import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
+import org.jboss.resteasy.specimpl.ResteasyUriBuilderImpl;
 import org.jboss.resteasy.specimpl.VariantListBuilderImpl;
 import org.jboss.resteasy.spi.AsyncClientResponseProvider;
 import org.jboss.resteasy.spi.AsyncResponseProvider;
@@ -669,7 +669,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    public UriBuilder createUriBuilder()
    {
-      return new ResteasyUriBuilder();
+      return new ResteasyUriBuilderImpl();
    }
 
    public Response.ResponseBuilder createResponseBuilder()

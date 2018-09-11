@@ -2,8 +2,8 @@ package org.jboss.resteasy.specimpl;
 
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.jboss.resteasy.specimpl.PathSegmentImpl;
-import org.jboss.resteasy.specimpl.ResteasyUriBuilder;
 import org.jboss.resteasy.specimpl.UnmodifiableMultivaluedMap;
+import org.jboss.resteasy.spi.ResteasyUriBuilder;
 import org.jboss.resteasy.util.Encode;
 import org.jboss.resteasy.util.PathHelper;
 
@@ -446,7 +446,7 @@ public class ResteasyUriInfo implements UriInfo
       {
          to = getBaseUriBuilder().replaceQuery(null).path(uri.getPath()).replaceQuery(uri.getQuery()).fragment(uri.getFragment()).build();
       }
-      return ResteasyUriBuilder.relativize(from, to);
+      return ResteasyUriBuilderImpl.relativize(from, to);
    }
 
 }
