@@ -1,6 +1,6 @@
 package org.jboss.resteasy.springmvc;
 
-import org.jboss.resteasy.core.ResourceInvoker;
+import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.plugins.spring.i18n.LogMessages;
 import org.jboss.resteasy.plugins.spring.i18n.Messages;

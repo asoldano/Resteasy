@@ -1,7 +1,7 @@
 package org.jboss.resteasy.links.impl;
 
 import org.jboss.resteasy.annotations.Form;
-import org.jboss.resteasy.core.ResourceInvoker;
+import org.jboss.resteasy.spi.ResourceInvoker;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ResourceMethodRegistry;
 import org.jboss.resteasy.links.ELProvider;

@@ -1,6 +1,6 @@
 package org.jboss.resteasy.test.interception;
 
-import org.jboss.resteasy.core.interception.jaxrs.JaxrsInterceptorRegistry;
+import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 
