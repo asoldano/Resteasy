@@ -15,7 +15,7 @@ import org.jboss.resteasy.test.providers.jackson2.resource.ExceptionMapperMarsha
 import org.jboss.resteasy.test.providers.jackson2.resource.ExceptionMapperMarshalResource;
 import org.jboss.resteasy.test.providers.jackson2.resource.MyEntity;
 import org.jboss.resteasy.spi.HttpResponseCodes;
-import org.jboss.resteasy.util.Types;
+import org.jboss.resteasy.spi.util.Types;
 import org.jboss.resteasy.utils.PermissionUtil;
 import org.jboss.resteasy.utils.PortProviderUtil;
 import org.jboss.resteasy.utils.TestUtil;

@@ -37,7 +37,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
 import org.jboss.resteasy.client.jaxrs.engines.HttpContextProvider;
-import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.spi.Dispatcher;
 import org.jboss.resteasy.plugins.server.embedded.SimpleSecurityDomain;
 import org.jboss.resteasy.plugins.server.sun.http.HttpServerContainer;
 import org.jboss.resteasy.test.TestPortProvider;

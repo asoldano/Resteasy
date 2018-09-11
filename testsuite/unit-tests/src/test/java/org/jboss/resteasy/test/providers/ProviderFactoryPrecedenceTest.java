@@ -6,7 +6,7 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.test.providers.resource.ProviderFactoryPrecedenceBase;
 import org.jboss.resteasy.test.providers.resource.ProviderFactoryPrecedenceIntegerPlainTextWriter;
 import org.jboss.resteasy.test.providers.resource.ProviderFactoryPrecendencePlainTextWriter;
-import org.jboss.resteasy.util.Types;
+import org.jboss.resteasy.spi.util.Types;
 import org.junit.Assert;
 import org.junit.Test;
 
