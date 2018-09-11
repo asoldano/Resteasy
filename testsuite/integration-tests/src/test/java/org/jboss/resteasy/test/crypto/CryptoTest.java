@@ -144,7 +144,7 @@ public class CryptoTest {
         logger.info(base64);
         PKCS7SignatureInput signed = new PKCS7SignatureInput(base64);
 
-        ResteasyProviderFactory rpf = new ResteasyProviderFactory();
+        ResteasyProviderFactory rpf = ResteasyProviderFactory.newInstance();
         RegisterBuiltin.register(rpf);
         signed.setProviders(rpf);
 

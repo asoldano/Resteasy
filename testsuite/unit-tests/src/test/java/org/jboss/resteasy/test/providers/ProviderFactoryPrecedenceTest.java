@@ -62,7 +62,7 @@ public class ProviderFactoryPrecedenceTest {
      */
     @Test
     public void testMatching2() {
-        ResteasyProviderFactory factory = new ResteasyProviderFactory();
+        ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
         RegisterBuiltin.register(factory);
 
         MessageBodyWriter<Boolean> writer = factory.getMessageBodyWriter(Boolean.class, null, null, new MediaType("text", "plain"));
@@ -77,7 +77,7 @@ public class ProviderFactoryPrecedenceTest {
     @Test
     public void testUserPrecendence1() throws Exception {
         // Register Built In first
-        ResteasyProviderFactory factory = new ResteasyProviderFactory();
+        ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
         RegisterBuiltin.register(factory);
 
         factory.registerProviderInstance(new ProviderFactoryPrecendencePlainTextWriter());
@@ -98,7 +98,7 @@ public class ProviderFactoryPrecedenceTest {
     @Test
     public void testUserPrecendence2() throws Exception {
         // register PlainTextWriter first
-        ResteasyProviderFactory factory = new ResteasyProviderFactory();
+        ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
 
         factory.registerProviderInstance(new ProviderFactoryPrecendencePlainTextWriter());
         RegisterBuiltin.register(factory);
@@ -117,7 +117,7 @@ public class ProviderFactoryPrecedenceTest {
      */
     @Test
     public void testUserPrecendence3() throws Exception {
-        ResteasyProviderFactory factory = new ResteasyProviderFactory();
+        ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
 
         factory.registerProviderInstance(new ProviderFactoryPrecedenceIntegerPlainTextWriter());
         factory.registerProviderInstance(new ProviderFactoryPrecendencePlainTextWriter());

@@ -1,10 +1,10 @@
 package org.jboss.resteasy.test.response.resource;
 
 import org.jboss.resteasy.core.InjectorFactoryImpl;
-import org.jboss.resteasy.core.ValueInjector;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.ValueInjector;
 import org.jboss.resteasy.spi.metadata.Parameter;
 import org.jboss.resteasy.spi.util.FindAnnotation;
 
