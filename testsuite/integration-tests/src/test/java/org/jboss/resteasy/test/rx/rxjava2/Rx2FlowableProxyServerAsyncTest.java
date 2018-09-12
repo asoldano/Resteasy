@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ResponseProcessingException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -91,7 +92,7 @@ public class Rx2FlowableProxyServerAsyncTest {
    //////////////////////////////////////////////////////////////////////////////
    @BeforeClass
    public static void beforeClass() throws Exception {
-      client = new ResteasyClientBuilder().build();
+      client = (ResteasyClient)ClientBuilder.newClient();
       proxy = client.target(generateURL("/")).proxy(Rx2ListNoStreamResource.class);
    }
 

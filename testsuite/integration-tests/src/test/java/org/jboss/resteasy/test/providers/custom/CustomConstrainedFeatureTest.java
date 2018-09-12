@@ -61,7 +61,7 @@ public class CustomConstrainedFeatureTest {
        // ResteasyProviderFactory providerFactory = ResteasyProviderFactory.newInstance();
        // providerFactory.register(CustomClientConstrainedFeature.class);
        // providerFactory.register(CustomServerConstrainedFeature.class);
-       // ResteasyClient client = new ResteasyClientBuilder().build();
+       // ResteasyClientImpl client = new ResteasyClientBuilderImpl().build();
        // the line below does the same as if there is providers file in META-INF/services/javax.ws.rs.ext.Providers
        ResteasyClient client = new ResteasyClientBuilder().register(CustomClientConstrainedFeature.class).register(CustomServerConstrainedFeature.class).build();
        assertTrue(CustomConstrainedFeatureResource.ERROR_CLIENT_FEATURE, CustomClientConstrainedFeature.wasInvoked());
