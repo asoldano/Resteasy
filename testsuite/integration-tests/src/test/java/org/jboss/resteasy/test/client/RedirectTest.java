@@ -9,7 +9,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
 import org.jboss.resteasy.test.client.resource.RedirectProxyResource;
 import org.jboss.resteasy.test.client.resource.RedirectResource;
@@ -295,7 +295,7 @@ public class RedirectTest extends ClientTestBase
    @Test
    public void testNoRedirectProxy()
    {
-      ResteasyClient client = new ResteasyClientBuilder().build();
+      ResteasyClient client = (ResteasyClient)ClientBuilder.newClient();
       try
       {
          RedirectProxyResource proxy = client.target(generateURL("/"))
