@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.CompletionStageRxInvoker;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -18,7 +19,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import javax.ws.rs.client.ClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.internal.CompletionStageRxInvokerProvider;
 import org.jboss.resteasy.test.rx.resource.RxCompletionStageResourceImpl;
 import org.jboss.resteasy.test.rx.resource.RxScheduledExecutorService;
@@ -288,7 +289,7 @@ public class RxCompletionStageTest {
       {
          RxScheduledExecutorService.used = false;
          RxScheduledExecutorService executor = new RxScheduledExecutorService();
-         ResteasyClient client = ((ResteasyClientBuilder) new ResteasyClientBuilder().executorService(executor)).build();
+         ResteasyClient client = ((ResteasyClientBuilder)ClientBuilder.newBuilder()).executorService(executor).build();
          client.register(CompletionStageRxInvokerProvider.class);
          CompletionStageRxInvoker invoker = client.target(generateURL("/get/string")).request().rx(CompletionStageRxInvoker.class);
          CompletionStage<Response> completionStage = invoker.get();

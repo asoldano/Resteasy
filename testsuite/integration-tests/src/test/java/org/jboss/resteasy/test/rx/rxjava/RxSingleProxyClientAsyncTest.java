@@ -9,19 +9,20 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.client.ClientBuilder;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import javax.ws.rs.client.ClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.rxjava.SingleRxInvokerProvider;
 import org.jboss.resteasy.test.client.resource.TestResource.TRACE;
 import org.jboss.resteasy.test.rx.resource.RxScheduledExecutorService;
+import org.jboss.resteasy.test.rx.resource.SimpleResourceImpl;
 import org.jboss.resteasy.test.rx.resource.TestException;
 import org.jboss.resteasy.test.rx.resource.TestExceptionMapper;
 import org.jboss.resteasy.test.rx.resource.Thing;
-import org.jboss.resteasy.test.rx.resource.SimpleResourceImpl;
 import org.jboss.resteasy.test.rx.rxjava.resource.RxSingleResource;
 import org.jboss.resteasy.utils.PortProviderUtil;
 import org.jboss.resteasy.utils.TestUtil;
@@ -288,7 +289,7 @@ public class RxSingleProxyClientAsyncTest {
          latch = new CountDownLatch(1);
          RxScheduledExecutorService.used = false;
          RxScheduledExecutorService executor = new RxScheduledExecutorService();
-         ResteasyClient client = ((ResteasyClientBuilder) new ResteasyClientBuilder().executorService(executor)).build();
+         ResteasyClient client = ((ResteasyClientBuilder)ClientBuilder.newBuilder()).executorService(executor).build();
          client.register(SingleRxInvokerProvider.class);
          RxSingleResource proxy = client.target(generateURL("/")).proxy(RxSingleResource.class);
          Single<String> single = proxy.get();

@@ -126,19 +126,6 @@ public class ResteasyClientBuilderImpl extends ResteasyClientBuilder
       return this;
    }
 
-   /**
-    * The timeout for waiting for data. A timeout value of zero is interpreted as an infinite timeout
-    *
-    * @param timeout the maximum time to wait
-    * @param unit the time unit of the timeout argument
-    * @return an updated client builder instance
-    */
-   @Deprecated
-   public ResteasyClientBuilderImpl socketTimeout(long timeout, TimeUnit unit)
-   {
-      return readTimeout(timeout, unit);
-   }
-
    @Override
    public ResteasyClientBuilderImpl connectTimeout(long timeout, TimeUnit unit)
    {
@@ -146,20 +133,6 @@ public class ResteasyClientBuilderImpl extends ResteasyClientBuilder
       this.establishConnectionTimeoutUnits = unit;
       return this;
    }
-
-   /**
-    * When trying to make an initial socket connection, what is the timeout?
-    *
-    * @param timeout the maximum time to wait
-    * @param unit the time unit of the timeout argument
-    * @return an updated client builder instance
-    */
-   @Deprecated
-   public ResteasyClientBuilderImpl establishConnectionTimeout(long timeout, TimeUnit unit)
-   {
-      return connectTimeout(timeout, unit);
-   }
-
 
    /**
     * If connection pooling enabled, how many connections to pool per url?

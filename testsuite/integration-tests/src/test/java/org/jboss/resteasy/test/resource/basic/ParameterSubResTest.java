@@ -76,7 +76,7 @@ public class ParameterSubResTest {
 
     @Before
     public void init() {
-        client = (ResteasyClient)ClientBuilder.newClient();
+        client = ClientBuilder.newClient();
     }
 
     @After

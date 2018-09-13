@@ -1,6 +1,7 @@
 package org.jboss.resteasy.test.providers.jackson2.jsonfilter;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -9,7 +10,6 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.category.ExpectedFailingOnWildFly13;
 import org.jboss.resteasy.category.NotForForwardCompatibility;
-import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.test.providers.jackson2.jsonfilter.resource.Jackson2Person;
 import org.jboss.resteasy.test.providers.jackson2.jsonfilter.resource.Jackson2PersonResource;
 import org.jboss.resteasy.test.providers.jackson2.jsonfilter.resource.ObjectFilterModifierMultiple;
@@ -56,7 +56,7 @@ public class JsonFilterWithServletMultipleFiltersTest {
      */
     @Test
     public void testJacksonString() throws Exception {
-        Client client = (ResteasyClient)ClientBuilder.newClient();
+        Client client = ClientBuilder.newClient();
         WebTarget target = client.target(generateURL("/person/333"));
         Response response = target.request().get();
         response.bufferEntity();

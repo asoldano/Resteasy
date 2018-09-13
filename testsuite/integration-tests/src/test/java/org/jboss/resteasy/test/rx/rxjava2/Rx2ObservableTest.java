@@ -19,6 +19,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
 import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.rxjava2.ObservableRxInvoker;
 import org.jboss.resteasy.rxjava2.ObservableRxInvokerProvider;
@@ -673,7 +675,7 @@ public class Rx2ObservableTest {
          latch = new CountDownLatch(1);
          RxScheduledExecutorService.used = false;
          RxScheduledExecutorService executor = new RxScheduledExecutorService();
-         ResteasyClient client = ((ResteasyClientBuilder) new ResteasyClientBuilder().executorService(executor)).build();
+         ResteasyClient client = ((ResteasyClientBuilder)ClientBuilder.newBuilder()).executorService(executor).build();
          client.register(ObservableRxInvokerProvider.class);
          ObservableRxInvoker invoker = client.target(generateURL("/get/string")).request().rx(ObservableRxInvoker.class);
          Observable<String> observable = (Observable<String>) invoker.get();

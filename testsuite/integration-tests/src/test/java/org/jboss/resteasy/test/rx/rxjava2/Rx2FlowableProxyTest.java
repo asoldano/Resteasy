@@ -11,12 +11,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.client.ClientBuilder;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import javax.ws.rs.client.ClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.rxjava2.FlowableRxInvokerProvider;
 import org.jboss.resteasy.test.rx.resource.Bytes;
 import org.jboss.resteasy.test.rx.resource.RxScheduledExecutorService;
@@ -490,7 +491,7 @@ public class Rx2FlowableProxyTest {
          latch = new CountDownLatch(1);
          RxScheduledExecutorService.used = false;
          RxScheduledExecutorService executor = new RxScheduledExecutorService();
-         ResteasyClient client = ((ResteasyClientBuilder) new ResteasyClientBuilder().executorService(executor)).build();
+         ResteasyClient client = ((ResteasyClientBuilder)ClientBuilder.newBuilder()).executorService(executor).build();
          client.register(FlowableRxInvokerProvider.class);
          Rx2FlowableResource proxy = client.target(generateURL("/")).proxy(Rx2FlowableResource.class);
          Flowable<String> flowable = proxy.get();

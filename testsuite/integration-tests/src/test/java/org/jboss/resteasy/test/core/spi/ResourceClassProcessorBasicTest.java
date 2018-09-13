@@ -236,7 +236,7 @@ public class ResourceClassProcessorBasicTest {
     @Test
     @Category(ExpectedFailing.class)
     public void proxyTest() {
-        ResteasyClient proxyClient= new ResteasyClientBuilder()
+        ResteasyClient proxyClient= (ResteasyClient)ClientBuilder.newBuilder()
                 .register(ResourceClassProcessorImplementation.class)
                 .build();
 

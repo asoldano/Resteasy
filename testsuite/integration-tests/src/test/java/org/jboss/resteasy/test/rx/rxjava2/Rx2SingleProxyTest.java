@@ -9,12 +9,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.client.ClientBuilder;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import javax.ws.rs.client.ClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.rxjava2.SingleRxInvokerProvider;
 import org.jboss.resteasy.test.rx.resource.RxScheduledExecutorService;
 import org.jboss.resteasy.test.rx.resource.TRACE;
@@ -289,7 +290,7 @@ public class Rx2SingleProxyTest {
          latch = new CountDownLatch(1);
          RxScheduledExecutorService.used = false;
          RxScheduledExecutorService executor = new RxScheduledExecutorService();
-         ResteasyClient client = ((ResteasyClientBuilder) new ResteasyClientBuilder().executorService(executor)).build();
+         ResteasyClient client = ((ResteasyClientBuilder)ClientBuilder.newBuilder()).executorService(executor).build();
          client.register(SingleRxInvokerProvider.class);
          Rx2SingleResource proxy = client.target(generateURL("/")).proxy(Rx2SingleResource.class);
          Single<String> single = proxy.get();

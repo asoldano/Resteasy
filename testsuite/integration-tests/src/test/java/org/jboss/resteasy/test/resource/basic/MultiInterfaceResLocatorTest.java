@@ -47,7 +47,7 @@ public class MultiInterfaceResLocatorTest {
      */
     @Test
     public void test() throws Exception {
-        Client client = (ResteasyClient)ClientBuilder.newClient();
+        Client client = ClientBuilder.newClient();
         Response response = client.target(generateURL("/test/hello1/")).request().get();
         String entity = response.readEntity(String.class);
         Assert.assertEquals(HttpResponseCodes.SC_OK, response.getStatus());

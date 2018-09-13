@@ -14,6 +14,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
 import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.rxjava2.SingleRxInvokerProvider;
 import org.jboss.resteasy.test.rx.resource.RxScheduledExecutorService;
@@ -291,7 +293,7 @@ public class Rx2SingleProxyClientAsyncTest {
          latch = new CountDownLatch(1);
          RxScheduledExecutorService.used = false;
          RxScheduledExecutorService executor = new RxScheduledExecutorService();
-         ResteasyClient client = ((ResteasyClientBuilder) new ResteasyClientBuilder().executorService(executor)).build();
+         ResteasyClient client = ((ResteasyClientBuilder)ClientBuilder.newBuilder()).executorService(executor).build();
          client.register(SingleRxInvokerProvider.class);
          Rx2SingleResource proxy = client.target(generateURL("/")).proxy(Rx2SingleResource.class);
          Single<String> single = proxy.get();
