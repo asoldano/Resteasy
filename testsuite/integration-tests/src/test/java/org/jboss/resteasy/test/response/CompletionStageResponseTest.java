@@ -57,7 +57,7 @@ public class CompletionStageResponseTest {
 
    @BeforeClass
    public static void setup() throws Exception {
-      client = new ResteasyClientBuilder().build();
+      client = (ResteasyClient)ClientBuilder.newClient();
       
       // Undertow's default behavior is to send an HTML error page only if the client and 
       // server are communicating on a loopback connection. Otherwise, it returns "".

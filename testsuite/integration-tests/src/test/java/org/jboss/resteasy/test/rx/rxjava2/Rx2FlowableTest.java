@@ -19,7 +19,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.rxjava2.FlowableRxInvoker;
 import org.jboss.resteasy.rxjava2.FlowableRxInvokerProvider;
 import org.jboss.resteasy.test.rx.resource.Bytes;
@@ -110,7 +110,7 @@ public class Rx2FlowableTest {
    //////////////////////////////////////////////////////////////////////////////
    @BeforeClass
    public static void beforeClass() throws Exception {
-      client = new ResteasyClientBuilder().build();
+      client = (ResteasyClient)ClientBuilder.newClient();
    }
 
    @Before
@@ -730,12 +730,12 @@ public class Rx2FlowableTest {
       CountDownLatch cdl = new CountDownLatch(2);
       CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<String>();
 
-      ResteasyClient client1 = new ResteasyClientBuilder().build();
+      ResteasyClient client1 = (ResteasyClient)ClientBuilder.newClient();
       client1.register(FlowableRxInvokerProvider.class);
       FlowableRxInvoker invoker1 = client1.target(generateURL("/get/string")).request().rx(FlowableRxInvoker.class);
       Flowable<String> flowable1 = (Flowable<String>) invoker1.get();      
 
-      ResteasyClient client2 = new ResteasyClientBuilder().build();
+      ResteasyClient client2 = (ResteasyClient)ClientBuilder.newClient();
       client2.register(FlowableRxInvokerProvider.class);
       FlowableRxInvoker invoker2 = client2.target(generateURL("/get/string")).request().rx(FlowableRxInvoker.class);
       Flowable<String> flowable2 = (Flowable<String>) invoker2.get();   

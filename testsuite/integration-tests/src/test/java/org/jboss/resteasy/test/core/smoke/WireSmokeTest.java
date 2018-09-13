@@ -3,7 +3,7 @@ package org.jboss.resteasy.test.core.smoke;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.test.core.smoke.resource.WireSmokeLocatingResource;
 import org.jboss.resteasy.test.core.smoke.resource.WireSmokeSimpleResource;
 import org.jboss.resteasy.test.core.smoke.resource.WireSmokeSimpleSubresource;
@@ -50,7 +50,7 @@ public class WireSmokeTest {
 
     @Before
     public void init() {
-        client = new ResteasyClientBuilder().build();
+        client = (ResteasyClient)ClientBuilder.newClient();
     }
 
     @After

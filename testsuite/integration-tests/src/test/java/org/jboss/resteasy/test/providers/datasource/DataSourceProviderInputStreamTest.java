@@ -10,7 +10,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.plugins.providers.DataSourceProvider;
 import org.jboss.resteasy.test.providers.datasource.resource.DataSourceProviderInputStreamResource;
 import org.jboss.resteasy.utils.PortProviderUtil;
@@ -61,7 +61,7 @@ public class DataSourceProviderInputStreamTest {
      */
     @Test
     public void testDataSourceProviderRestClient() throws Exception {
-        Client client = new ResteasyClientBuilder().build();
+        Client client = (ResteasyClient)ClientBuilder.newClient();
         client.register(DataSourceProvider.class);
         WebTarget target = client.target(generateURL("/"));
         int expectedLength = DataSourceProviderInputStreamResource.KBs * 1024;

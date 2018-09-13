@@ -19,7 +19,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.rxjava.SingleRxInvoker;
 import org.jboss.resteasy.rxjava.SingleRxInvokerProvider;
 import org.jboss.resteasy.test.client.resource.TestResource.TRACE;
@@ -92,7 +92,7 @@ public class RxSingleTest {
    //////////////////////////////////////////////////////////////////////////////
    @BeforeClass
    public static void beforeClass() throws Exception {
-      client = new ResteasyClientBuilder().build();
+      client = (ResteasyClient)ClientBuilder.newClient();
    }
 
    @Before
@@ -432,12 +432,12 @@ public class RxSingleTest {
       CountDownLatch cdl = new CountDownLatch(2);
       CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<String>();
 
-      ResteasyClient client1 = new ResteasyClientBuilder().build();
+      ResteasyClient client1 = (ResteasyClient)ClientBuilder.newClient();
       client1.register(SingleRxInvokerProvider.class);
       SingleRxInvoker invoker1 = client1.target(generateURL("/get/string")).request().rx(SingleRxInvoker.class);
       Single<Response> single1 = (Single<Response>) invoker1.get();      
 
-      ResteasyClient client2 = new ResteasyClientBuilder().build();
+      ResteasyClient client2 = (ResteasyClient)ClientBuilder.newClient();
       client2.register(SingleRxInvokerProvider.class);
       SingleRxInvoker invoker2 = client2.target(generateURL("/get/string")).request().rx(SingleRxInvoker.class);
       Single<Response> single2 = (Single<Response>) invoker2.get();

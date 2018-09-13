@@ -3,7 +3,7 @@ package org.jboss.resteasy.test.providers.jackson2;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.test.providers.jackson2.resource.CustomJackson2ProviderResource;
 import org.jboss.resteasy.test.providers.jackson2.resource.CustomJackson2ProviderApplication;
 import org.jboss.resteasy.spi.HttpResponseCodes;
@@ -67,7 +67,7 @@ public class CustomJackson2ProviderTest {
 
     @Before
     public void init() {
-        client = new ResteasyClientBuilder().build();
+        client = (ResteasyClient)ClientBuilder.newClient();
     }
 
     @After

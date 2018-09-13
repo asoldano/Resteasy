@@ -19,7 +19,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.rxjava.ObservableRxInvokerProvider;
 import org.jboss.resteasy.test.client.resource.TestResource.TRACE;
 import org.jboss.resteasy.test.rx.resource.Bytes;
@@ -111,7 +111,7 @@ public class RxObservableProxyTest {
    //////////////////////////////////////////////////////////////////////////////
    @BeforeClass
    public static void beforeClass() throws Exception {
-      client = new ResteasyClientBuilder().build();
+      client = (ResteasyClient)ClientBuilder.newClient();
       proxy = client.target(generateURL("/")).proxy(RxObservableResource.class);
    }
 
@@ -550,12 +550,12 @@ public class RxObservableProxyTest {
       CountDownLatch cdl = new CountDownLatch(2);
       CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<String>();
 
-      ResteasyClient client1 = new ResteasyClientBuilder().build();
+      ResteasyClient client1 = (ResteasyClient)ClientBuilder.newClient();
       client1.register(ObservableRxInvokerProvider.class);
       RxObservableResource proxy1 = client1.target(generateURL("/")).proxy(RxObservableResource.class);
       Observable<String> observable1 = proxy1.get();   
 
-      ResteasyClient client2 = new ResteasyClientBuilder().build();
+      ResteasyClient client2 = (ResteasyClient)ClientBuilder.newClient();
       client2.register(ObservableRxInvokerProvider.class);
       RxObservableResource proxy2 = client2.target(generateURL("/")).proxy(RxObservableResource.class);
       Observable<String> observable2 = proxy2.get();

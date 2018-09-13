@@ -12,7 +12,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.resteasy.category.NotForForwardCompatibility;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClientEngine;
 import org.jboss.resteasy.setup.AbstractUsersRolesSecurityDomainSetup;
 import org.jboss.resteasy.test.security.resource.BasicAuthBaseProxy;
@@ -78,7 +78,7 @@ public class BasicAuthTest {
             unauthorizedClient = new ResteasyClientBuilder().httpEngine(engine).build();
         }
         // noAutorizationClient
-        noAutorizationClient = new ResteasyClientBuilder().build();
+        noAutorizationClient = (ResteasyClient)ClientBuilder.newClient();
     }
 
     @AfterClass

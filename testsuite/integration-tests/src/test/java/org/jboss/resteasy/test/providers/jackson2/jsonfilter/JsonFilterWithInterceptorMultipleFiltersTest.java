@@ -5,7 +5,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.resteasy.category.ExpectedFailingOnWildFly13;
 import org.jboss.resteasy.category.NotForForwardCompatibility;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import javax.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.test.providers.jackson2.jsonfilter.resource.Jackson2Person;
 import org.jboss.resteasy.test.providers.jackson2.jsonfilter.resource.Jackson2PersonResource;
 import org.jboss.resteasy.test.providers.jackson2.jsonfilter.resource.JsonFilterModifierMultipleWriteInterceptor;
@@ -56,7 +56,7 @@ public class JsonFilterWithInterceptorMultipleFiltersTest {
      */
     @Test
     public void testJacksonString2() throws Exception {
-        Client client = new ResteasyClientBuilder().build();
+        Client client = (ResteasyClient)ClientBuilder.newClient();
         WebTarget target = client.target(generateURL("/person/333"));
         Response response = target.request().get();
         response.bufferEntity();
