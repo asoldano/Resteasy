@@ -57,7 +57,7 @@ import org.jboss.resteasy.spi.util.Types;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@SuppressWarnings(value = "unchecked")
+@SuppressWarnings(value = {"unchecked", "rawtypes"})
 public class ResourceBuilder
 {
    public static class ResourceClassBuilder
@@ -250,7 +250,6 @@ public class ResourceBuilder
          return (T) this;
       }
 
-      @SuppressWarnings("deprecation")
       public T fromAnnotations()
       {
          Annotation[] annotations = parameter.getAnnotations();
@@ -265,7 +264,6 @@ public class ResourceBuilder
 
          QueryParam queryParam;
          org.jboss.resteasy.annotations.jaxrs.QueryParam queryParam2;
-         Query query;
          HeaderParam header;
          org.jboss.resteasy.annotations.jaxrs.HeaderParam header2;
          MatrixParam matrix;
@@ -277,7 +275,6 @@ public class ResourceBuilder
          FormParam formParam;
          org.jboss.resteasy.annotations.jaxrs.FormParam formParam2;
          Form form;
-         Suspended suspended;
 
          if ((queryParam = findAnnotation(annotations, QueryParam.class)) != null)
          {
@@ -293,7 +290,7 @@ public class ResourceBuilder
                parameter.paramName = queryParam2.value();
             }
          }
-         else if ((query = findAnnotation(annotations, Query.class)) != null)
+         else if ((findAnnotation(annotations, Query.class)) != null)
          {
             parameter.paramType = Parameter.ParamType.QUERY;
             parameter.paramName = ""; // TODO query.prefix();
@@ -381,7 +378,7 @@ public class ResourceBuilder
          {
             parameter.paramType = Parameter.ParamType.CONTEXT;
          }
-         else if ((suspended = findAnnotation(annotations, Suspended.class)) != null)
+         else if ((findAnnotation(annotations, Suspended.class)) != null)
          {
             parameter.paramType = Parameter.ParamType.SUSPENDED;
          }

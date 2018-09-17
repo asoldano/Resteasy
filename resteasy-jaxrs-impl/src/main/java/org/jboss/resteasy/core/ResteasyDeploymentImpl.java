@@ -42,6 +42,7 @@ import java.util.Map;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
+@SuppressWarnings("rawtypes")
 public class ResteasyDeploymentImpl implements ResteasyDeployment
 {
    private boolean widerRequestMatching;
@@ -72,9 +73,9 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
    private List<Class> actualResourceClasses = new ArrayList<Class>();
    private List<ResourceFactory> resourceFactories = new ArrayList<ResourceFactory>();
    private List<Object> resources = new ArrayList<Object>();
-   private Map<String, String> mediaTypeMappings = new HashMap<String, String>();
-   private Map<String, String> languageExtensions = new HashMap<String, String>();
-   private Map<Class, Object> defaultContextObjects = new HashMap<Class, Object>();
+   private Map<String, String> mediaTypeMappings = new HashMap<String, String>(4);
+   private Map<String, String> languageExtensions = new HashMap<String, String>(4);
+   private Map<Class, Object> defaultContextObjects = new HashMap<Class, Object>(4);
    private Map<String, String> constructedDefaultContextObjects = new HashMap<String, String>();
    private Registry registry;
    private Dispatcher dispatcher;
@@ -94,7 +95,7 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
       }
    }
 
-   @SuppressWarnings(value = {"unchecked", "deprecation"})
+   @SuppressWarnings(value = {"unchecked"})
    private void startInternal()
    {
       // it is very important that each deployment create their own provider factory
