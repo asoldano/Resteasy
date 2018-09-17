@@ -594,8 +594,8 @@ public interface Messages
    @Message(id = BASE + 785, value = "segments parameter was null")
    String segmentsParameterNull();
 
-   @Message(id = BASE + 790, value = "Should be unreachable")
-   String shouldBeUnreachable();
+//   @Message(id = BASE + 790, value = "Should be unreachable")
+//   String shouldBeUnreachable();
 
    @Message(id = BASE
          + 795, value = "Source array with length {0} cannot have offset of {1} and process {2} bytes.", format = Format.MESSAGE_FORMAT)
@@ -636,8 +636,8 @@ public interface Messages
    @Message(id = BASE + 850, value = "type param was null")
    String typeParamNull();
 
-   @Message(id = BASE + 855, value = "Unable to create URI: %s")
-   String unableToCreateURI(String buf);
+//   @Message(id = BASE + 855, value = "Unable to create URI: %s")
+//   String unableToCreateURI(String buf);
 
    @Message(id = BASE + 860, value = "Unable to decode query string")
    String unableToDecodeQueryString();
@@ -710,14 +710,14 @@ public interface Messages
    @Message(id = BASE + 970, value = "Unable to resolve type variable")
    String unableToResolveTypeVariable();
 
-   @Message(id = BASE + 975, value = "Unable to unmarshall response for %s")
-   String unableToUnmarshalResponse(String attributeExceptionsTo);
+//   @Message(id = BASE + 975, value = "Unable to unmarshall response for %s")
+//   String unableToUnmarshalResponse(String attributeExceptionsTo);
 
    @Message(id = BASE + 977, value = "Unexpected Number subclass: %s")
    String unexpectedNumberSubclass(String classname);
 
-   @Message(id = BASE + 980, value = "Unknown interceptor precedence: %s")
-   String unknownInterceptorPrecedence(String precedence);
+//   @Message(id = BASE + 980, value = "Unknown interceptor precedence: %s")
+//   String unknownInterceptorPrecedence(String precedence);
 
    @Message(id = BASE + 985, value = "Unknown media type for response entity")
    String unknownMediaTypeResponseEntity();
@@ -749,20 +749,20 @@ public interface Messages
    @Message(id = BASE + 1030, value = "User is not registered: %s")
    String userIsNotRegistered(String user);
 
-   @Message(id = BASE + 1035, value = "A value was null")
-   String valueNull();
+//   @Message(id = BASE + 1035, value = "A value was null")
+//   String valueNull();
 
    @Message(id = BASE + 1040, value = "value param is null")
    String valueParamIsNull();
 
-   @Message(id = BASE + 1045, value = "value param was null")
-   String valueParamWasNull();
+//   @Message(id = BASE + 1045, value = "value param was null")
+//   String valueParamWasNull();
 
-   @Message(id = BASE + 1050, value = "values param is null")
-   String valuesParamIsNull();
+//   @Message(id = BASE + 1050, value = "values param is null")
+//   String valuesParamIsNull();
 
-   @Message(id = BASE + 1055, value = "values param was null")
-   String valuesParamWasNull();
+//   @Message(id = BASE + 1055, value = "values param was null")
+//   String valuesParamWasNull();
 
    @Message(id = BASE + 1060, value = "values parameter is null")
    String valuesParameterNull();

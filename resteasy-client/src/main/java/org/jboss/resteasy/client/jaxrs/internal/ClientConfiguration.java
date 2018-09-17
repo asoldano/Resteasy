@@ -33,9 +33,10 @@ import java.util.Set;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
+@SuppressWarnings("rawtypes")
 public class ClientConfiguration implements Configuration, Configurable<ClientConfiguration>, Providers, HeaderValueProcessor
 {
-   protected ResteasyProviderFactory providerFactory;
+   private ResteasyProviderFactory providerFactory;
 
    public ClientConfiguration(ResteasyProviderFactory factory)
    {
@@ -124,9 +125,6 @@ public class ClientConfiguration implements Configuration, Configurable<ClientCo
    {
       return providerFactory.toString(object, object.getClass(), null, null);
    }
-
-
-
 
    // interface implementation
 
@@ -289,10 +287,5 @@ public class ClientConfiguration implements Configuration, Configurable<ClientCo
    public RxInvokerProvider<?> getRxInvokerProviderFromReactiveClass(Class<?> clazz)
    {
       return providerFactory.getRxInvokerProviderFromReactiveClass(clazz);
-   }
-   
-   public boolean isReactive(Class<?> clazz)
-   {
-      return providerFactory.isReactive(clazz);
    }
 }

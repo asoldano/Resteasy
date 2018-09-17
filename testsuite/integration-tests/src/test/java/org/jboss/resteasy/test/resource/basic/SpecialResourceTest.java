@@ -125,7 +125,7 @@ public class SpecialResourceTest {
               EntityUtils.consume(response.getEntity());
            } catch (IOException e)
            {
-              LogMessages.LOGGER.unableToCloseEntityStream(e);
+//              LogMessages.LOGGER.unableToCloseEntityStream(e);
            }
         }
     }

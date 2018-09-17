@@ -1024,7 +1024,7 @@ public class ResteasyUriBuilderImpl extends ResteasyUriBuilder
    @Override
    public URI buildFromEncoded(Object... values) throws IllegalArgumentException, UriBuilderException
    {
-      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParamIsNull());
+      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParameterNull());
       return buildFromValues(false, true, values);
    }
 
@@ -1043,7 +1043,7 @@ public class ResteasyUriBuilderImpl extends ResteasyUriBuilder
    @Override
    public URI build(Object[] values, boolean encodeSlashInPath) throws IllegalArgumentException, UriBuilderException
    {
-      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParamIsNull());
+      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParameterNull());
       return buildFromValues(encodeSlashInPath, false, values);
    }
 

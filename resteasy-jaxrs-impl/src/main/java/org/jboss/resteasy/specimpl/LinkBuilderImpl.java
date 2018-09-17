@@ -87,7 +87,7 @@ public class LinkBuilderImpl implements Link.Builder
    @Override
    public Link.Builder param(String name, String value) throws IllegalArgumentException {
       if (name == null) throw new IllegalArgumentException(Messages.MESSAGES.nameParamWasNull());
-      if (value == null) throw new IllegalArgumentException(Messages.MESSAGES.valueParamWasNull());
+      if (value == null) throw new IllegalArgumentException(Messages.MESSAGES.valueParamIsNull());
       this.map.put(name, value);
       return this;
    }
@@ -95,7 +95,7 @@ public class LinkBuilderImpl implements Link.Builder
    @Override
    public Link build(Object... values) throws UriBuilderException
    {
-      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParamWasNull());
+      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParameterNull());
       URI built = null;
       if (uriBuilder == null)
       {
@@ -116,7 +116,7 @@ public class LinkBuilderImpl implements Link.Builder
    public Link buildRelativized(URI uri, Object... values)
    {
       if (uri == null) throw new IllegalArgumentException(Messages.MESSAGES.uriParamNull());
-      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParamWasNull());
+      if (values == null) throw new IllegalArgumentException(Messages.MESSAGES.valuesParameterNull());
       URI built = uriBuilder.build(values);
       URI with = built;
       if (baseUri != null) with = baseUri.resolve(built);

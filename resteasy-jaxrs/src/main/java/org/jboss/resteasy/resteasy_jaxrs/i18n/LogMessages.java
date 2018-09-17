@@ -100,10 +100,10 @@ public interface LogMessages extends BasicLogger
    @Message(id = BASE + 123, value = "Could not bind to specified download directory %s so will use temp dir.")
    void couldNotBindToDirectory(String directory);
 
-   @LogMessage(level = Level.WARN)
-   @Message(id = BASE
-         + 125, value = "Marking file '%s' to be deleted, as it could not be deleted while processing request:")
-   void couldNotDeleteFile(String path, @Cause Throwable cause);
+//   @LogMessage(level = Level.WARN)
+//   @Message(id = BASE
+//         + 125, value = "Marking file '%s' to be deleted, as it could not be deleted while processing request:")
+//   void couldNotDeleteFile(String path, @Cause Throwable cause);
 
    @LogMessage(level = Level.WARN)
    @Message(id = BASE + 130, value = "Failed to parse request.")
@@ -225,9 +225,9 @@ public interface LogMessages extends BasicLogger
          + 227, value = "MediaType {0} on {1}() lacks charset. Consider setting charset or turning on context parameter resteasy.add.charset", format = Format.MESSAGE_FORMAT)
    void mediaTypeLacksCharset(MediaType mediaType, String method);
 
-   @LogMessage(level = Level.INFO)
-   @Message(id = BASE + 230, value = "Unable to close entity stream")
-   void unableToCloseEntityStream(@Cause Throwable cause);
+//   @LogMessage(level = Level.INFO)
+//   @Message(id = BASE + 230, value = "Unable to close entity stream")
+//   void unableToCloseEntityStream(@Cause Throwable cause);
 
    @LogMessage(level = Level.INFO)
    @Message(id = BASE + 235, value = "Unable to decode GZIP compressed Base64 data")

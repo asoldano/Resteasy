@@ -39,8 +39,6 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
 {
    private static volatile ResteasyProviderFactory instance;
 
-   private static boolean registerBuiltinByDefault = true;
-
    public abstract Set<DynamicFeature> getServerDynamicFeatures();
 
    public abstract Set<DynamicFeature> getClientDynamicFeatures();
@@ -119,8 +117,7 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
                {
                   instance = result = newInstance(); //TODO use reflection directly, to avoid circular dependency
                }
-               if (registerBuiltinByDefault)
-                  instance.registerBuiltin();
+               instance.registerBuiltin();
             }
          }
       }
@@ -139,11 +136,6 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
       {
          throw new RuntimeException(e);
       }
-   }
-
-   public static void setRegisterBuiltinByDefault(boolean registerBuiltinByDefault)
-   {
-      ResteasyProviderFactory.registerBuiltinByDefault = registerBuiltinByDefault;
    }
 
    protected abstract void registerBuiltin();
@@ -308,8 +300,6 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
    public abstract <I extends RxInvoker> RxInvokerProvider<I> getRxInvokerProvider(Class<I> clazz);
 
    public abstract RxInvokerProvider<?> getRxInvokerProviderFromReactiveClass(Class<?> clazz);
-
-   public abstract boolean isReactive(Class<?> clazz);
 
    public abstract ResourceBuilder getResourceBuilder();
 

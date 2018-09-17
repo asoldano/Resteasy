@@ -2631,11 +2631,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       return null;
    }
 
-   public boolean isReactive(Class<?> clazz)
-   {
-      return reactiveClasses.keySet().contains(clazz);
-   }
-
    private void addResourceClassProcessor(Class<ResourceClassProcessor> processorClass, int priority)
    {
       ResourceClassProcessor processor = createProviderInstance(processorClass);
