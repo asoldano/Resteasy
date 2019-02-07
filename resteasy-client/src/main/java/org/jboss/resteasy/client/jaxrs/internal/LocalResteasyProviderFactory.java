@@ -2,7 +2,7 @@ package org.jboss.resteasy.client.jaxrs.internal;
 
 import javax.ws.rs.RuntimeType;
 
-import org.jboss.resteasy.core.ResteasyProviderFactoryImpl;
+import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 /**

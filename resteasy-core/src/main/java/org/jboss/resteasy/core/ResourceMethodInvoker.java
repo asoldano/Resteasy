@@ -2,6 +2,7 @@ package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.annotations.Stream;
 import org.jboss.resteasy.core.interception.jaxrs.PostMatchContainerRequestContext;
+import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.core.registry.SegmentNode;
 import org.jboss.resteasy.plugins.server.resourcefactory.SingletonResource;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
