@@ -4,16 +4,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -34,15 +31,11 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Configurable;
 import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Variant;
@@ -60,23 +53,9 @@ import javax.ws.rs.ext.WriterInterceptor;
 import org.jboss.resteasy.core.InjectorFactoryImpl;
 import org.jboss.resteasy.core.MediaTypeMap;
 import org.jboss.resteasy.core.ResteasyContext;
-import org.jboss.resteasy.plugins.delegates.CacheControlDelegate;
-import org.jboss.resteasy.plugins.delegates.CookieHeaderDelegate;
-import org.jboss.resteasy.plugins.delegates.DateDelegate;
-import org.jboss.resteasy.plugins.delegates.EntityTagDelegate;
-import org.jboss.resteasy.plugins.delegates.LinkDelegate;
-import org.jboss.resteasy.plugins.delegates.LinkHeaderDelegate;
-import org.jboss.resteasy.plugins.delegates.LocaleDelegate;
-import org.jboss.resteasy.plugins.delegates.MediaTypeHeaderDelegate;
-import org.jboss.resteasy.plugins.delegates.NewCookieHeaderDelegate;
-import org.jboss.resteasy.plugins.delegates.UriHeaderDelegate;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
-import org.jboss.resteasy.specimpl.LinkBuilderImpl;
-import org.jboss.resteasy.specimpl.ResponseBuilderImpl;
-import org.jboss.resteasy.specimpl.ResteasyUriBuilderImpl;
-import org.jboss.resteasy.specimpl.VariantListBuilderImpl;
 import org.jboss.resteasy.spi.AsyncClientResponseProvider;
 import org.jboss.resteasy.spi.AsyncResponseProvider;
 import org.jboss.resteasy.spi.AsyncStreamProvider;
@@ -86,7 +65,6 @@ import org.jboss.resteasy.spi.HeaderValueProcessor;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.InjectorFactory;
-import org.jboss.resteasy.spi.LinkHeader;
 import org.jboss.resteasy.spi.PropertyInjector;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.StringParameterUnmarshaller;
@@ -107,6 +85,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 {
    private ClientProviderFactoryUtil clientUtil;
    private ServerProviderFactoryUtil serverUtil;
+   private RuntimeDelegateUtil runtimeDelegateUtil;
    private Map<Class<?>, SortedKey<ExceptionMapper>> sortedExceptionMappers;
    private Map<Class<?>, AsyncResponseProvider> asyncResponseProviders;
    private Map<Class<?>, AsyncClientResponseProvider> asyncClientResponseProviders;
@@ -117,7 +96,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    private Set<ExtSortedKey<ParamConverterProvider>> sortedParamConverterProviders;
    private Map<Class<?>, Class<? extends StringParameterUnmarshaller>> stringParameterUnmarshallers;
    protected Map<Class<?>, Map<Class<?>, Integer>> classContracts;
-   private Map<Class<?>, HeaderDelegate> headerDelegates;
    private boolean builtinsRegistered = false;
    private boolean registerBuiltins = true;
    private InjectorFactory injectorFactory;
@@ -135,7 +113,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    {
       // NOTE!!! It is important to put all initialization into initialize() as ThreadLocalResteasyProviderFactory
       // subclasses and delegates to this class.
-      initialize();
+      initialize(null);
    }
 
    /**
@@ -168,6 +146,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
          this.parent = (ResteasyProviderFactoryImpl) parent;
          clientUtil = new ClientProviderFactoryUtil(this);
          serverUtil = new ServerProviderFactoryUtil(this);
+         runtimeDelegateUtil = new RuntimeDelegateUtil();
          providerClasses = new CopyOnWriteArraySet<>();
          providerInstances = new CopyOnWriteArraySet<>();
          properties = new ConcurrentHashMap<>();
@@ -192,6 +171,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    {
       clientUtil = new ClientProviderFactoryUtil(this);
       serverUtil = new ServerProviderFactoryUtil(this);
+      runtimeDelegateUtil = new RuntimeDelegateUtil();
       serverDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getServerDynamicFeatures());
       clientDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getClientDynamicFeatures());
       enabledFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getEnabledFeatures());
@@ -216,20 +196,10 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       sortedParamConverterProviders = Collections.synchronizedSortedSet(parent == null ? new TreeSet<>() : new TreeSet<>(parent.getSortedParamConverterProviders()));
       stringParameterUnmarshallers = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getStringParameterUnmarshallers());
       reactiveClasses = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.reactiveClasses);
-      headerDelegates = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getHeaderDelegates());
-      addHeaderDelegateIfAbsent(MediaType.class, MediaTypeHeaderDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(NewCookie.class, NewCookieHeaderDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(Cookie.class, CookieHeaderDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(URI.class, UriHeaderDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(EntityTag.class, EntityTagDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(CacheControl.class, CacheControlDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(Locale.class, LocaleDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(LinkHeader.class, LinkHeaderDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(javax.ws.rs.core.Link.class, LinkDelegate.INSTANCE);
-      addHeaderDelegateIfAbsent(Date.class, DateDelegate.INSTANCE);
 
       resourceBuilder = new ResourceBuilder();
 
+      runtimeDelegateUtil.initialize(parent);
       serverUtil.initializeRegistriesAndFilters(parent);
       clientUtil.initializeRegistriesAndFilters(parent);
 
@@ -489,87 +459,32 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    public UriBuilder createUriBuilder()
    {
-      return new ResteasyUriBuilderImpl();
+      return runtimeDelegateUtil.createUriBuilder();
    }
 
    public Response.ResponseBuilder createResponseBuilder()
    {
-      return new ResponseBuilderImpl();
+      return runtimeDelegateUtil.createResponseBuilder();
    }
 
    public Variant.VariantListBuilder createVariantListBuilder()
    {
-      return new VariantListBuilderImpl();
+      return runtimeDelegateUtil.createVariantListBuilder();
    }
 
    public <T> HeaderDelegate<T> createHeaderDelegate(Class<T> tClass)
    {
-      if (tClass == null)
-         throw new IllegalArgumentException(Messages.MESSAGES.tClassParameterNull());
-      if (headerDelegates == null && parent != null)
-         return parent.createHeaderDelegate(tClass);
-
-      Class<?> clazz = tClass;
-      while (clazz != null)
-      {
-         HeaderDelegate<T> delegate = headerDelegates.get(clazz);
-         if (delegate != null)
-         {
-            return delegate;
-         }
-         delegate = createHeaderDelegateFromInterfaces(clazz.getInterfaces());
-         if (delegate != null)
-         {
-            return delegate;
-         }
-         clazz = clazz.getSuperclass();
-      }
-
-      return createHeaderDelegateFromInterfaces(tClass.getInterfaces());
+      return runtimeDelegateUtil.createHeaderDelegate(tClass, parent);
    }
 
-   private <T> HeaderDelegate<T> createHeaderDelegateFromInterfaces(Class<?>[] interfaces)
+   protected Map<Class<?>, HeaderDelegate> getHeaderDelegates()
    {
-      HeaderDelegate<T> delegate = null;
-      for (int i = 0; i < interfaces.length; i++)
-      {
-         delegate = headerDelegates.get(interfaces[i]);
-         if (delegate != null)
-         {
-            return delegate;
-         }
-         delegate = createHeaderDelegateFromInterfaces(interfaces[i].getInterfaces());
-         if (delegate != null)
-         {
-            return delegate;
-         }
-      }
-      return null;
-   }
-
-   private Map<Class<?>, HeaderDelegate> getHeaderDelegates()
-   {
-      if (headerDelegates == null && parent != null)
-         return parent.getHeaderDelegates();
-      return headerDelegates;
-   }
-
-   private void addHeaderDelegateIfAbsent(Class clazz, HeaderDelegate header)
-   {
-      if (headerDelegates == null || !headerDelegates.containsKey(clazz))
-      {
-         addHeaderDelegate(clazz, header);
-      }
+      return runtimeDelegateUtil.getHeaderDelegates(this);
    }
 
    public void addHeaderDelegate(Class clazz, HeaderDelegate header)
    {
-      if (headerDelegates == null)
-      {
-         headerDelegates = new ConcurrentHashMap<Class<?>, HeaderDelegate>();
-         headerDelegates.putAll(parent.getHeaderDelegates());
-      }
-      headerDelegates.put(clazz, header);
+      runtimeDelegateUtil.addHeaderDelegate(clazz, header, parent);
    }
 
    @Deprecated
@@ -1958,7 +1873,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    @Override
    public Link.Builder createLinkBuilder()
    {
-      return new LinkBuilderImpl();
+      return runtimeDelegateUtil.createLinkBuilder();
    }
 
    public <I extends RxInvoker> RxInvokerProvider<I> getRxInvokerProvider(Class<I> clazz)
