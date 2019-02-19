@@ -113,7 +113,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    {
       // NOTE!!! It is important to put all initialization into initialize() as ThreadLocalResteasyProviderFactory
       // subclasses and delegates to this class.
-      initialize(null);
+      initialize();
    }
 
    /**
