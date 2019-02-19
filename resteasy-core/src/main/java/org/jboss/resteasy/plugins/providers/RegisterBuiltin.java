@@ -20,7 +20,11 @@ import javax.ws.rs.RuntimeType;
 import javax.ws.rs.ext.Providers;
 
 import org.jboss.resteasy.core.ThreadLocalResteasyProviderFactory;
+import org.jboss.resteasy.core.providerFactory.ClientProviderFactoryUtil;
+import org.jboss.resteasy.core.providerFactory.NOOPServerProviderFactoryUtil;
 import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
+import org.jboss.resteasy.core.providerFactory.RuntimeDelegateUtil;
+import org.jboss.resteasy.core.providerFactory.ServerProviderFactoryUtil;
 import org.jboss.resteasy.plugins.interceptors.AcceptEncodingGZIPFilter;
 import org.jboss.resteasy.plugins.interceptors.GZIPDecodingInterceptor;
 import org.jboss.resteasy.plugins.interceptors.GZIPEncodingInterceptor;
@@ -49,6 +53,13 @@ public class RegisterBuiltin
             public RuntimeType getRuntimeType()
             {
                return RuntimeType.CLIENT;
+            }
+            @Override
+            protected void initializeUtils()
+            {
+               clientUtil = new ClientProviderFactoryUtil(this);
+               serverUtil = NOOPServerProviderFactoryUtil.INSTANCE;
+               runtimeDelegateUtil = new RuntimeDelegateUtil();
             }
          };
          if (!rpf.isBuiltinsRegistered()) {

@@ -83,9 +83,9 @@ import org.jboss.resteasy.util.FeatureContextDelegate;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory implements Providers, HeaderValueProcessor, Configurable<ResteasyProviderFactory>, Configuration
 {
-   private ClientProviderFactoryUtil clientUtil;
-   private ServerProviderFactoryUtil serverUtil;
-   private RuntimeDelegateUtil runtimeDelegateUtil;
+   protected ClientProviderFactoryUtil clientUtil;
+   protected ServerProviderFactoryUtil serverUtil;
+   protected RuntimeDelegateUtil runtimeDelegateUtil;
    private Map<Class<?>, SortedKey<ExceptionMapper>> sortedExceptionMappers;
    private Map<Class<?>, AsyncResponseProvider> asyncResponseProviders;
    private Map<Class<?>, AsyncClientResponseProvider> asyncClientResponseProviders;
@@ -111,6 +111,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    public ResteasyProviderFactoryImpl()
    {
+      initializeUtils();
       // NOTE!!! It is important to put all initialization into initialize() as ThreadLocalResteasyProviderFactory
       // subclasses and delegates to this class.
       initialize();
@@ -135,6 +136,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
     */
    public ResteasyProviderFactoryImpl(final ResteasyProviderFactory parent, final boolean local)
    {
+      initializeUtils();
       if (local || parent == null)
       {
          // Parent MUST not be referenced after current object is created
@@ -144,9 +146,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       else
       {
          this.parent = (ResteasyProviderFactoryImpl) parent;
-         clientUtil = new ClientProviderFactoryUtil(this);
-         serverUtil = new ServerProviderFactoryUtil(this);
-         runtimeDelegateUtil = new RuntimeDelegateUtil();
          providerClasses = new CopyOnWriteArraySet<>();
          providerInstances = new CopyOnWriteArraySet<>();
          properties = new ConcurrentHashMap<>();
@@ -166,12 +165,16 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    {
       initialize(null);
    }
-
-   protected void initialize(ResteasyProviderFactoryImpl parent)
+   
+   protected void initializeUtils()
    {
       clientUtil = new ClientProviderFactoryUtil(this);
       serverUtil = new ServerProviderFactoryUtil(this);
       runtimeDelegateUtil = new RuntimeDelegateUtil();
+   }
+
+   protected void initialize(ResteasyProviderFactoryImpl parent)
+   {
       serverDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getServerDynamicFeatures());
       clientDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getClientDynamicFeatures());
       enabledFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getEnabledFeatures());

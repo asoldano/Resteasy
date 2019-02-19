@@ -2,7 +2,10 @@ package org.jboss.resteasy.client.jaxrs.internal;
 
 import javax.ws.rs.RuntimeType;
 
+import org.jboss.resteasy.core.providerFactory.ClientProviderFactoryUtil;
+import org.jboss.resteasy.core.providerFactory.NOOPServerProviderFactoryUtil;
 import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
+import org.jboss.resteasy.core.providerFactory.RuntimeDelegateUtil;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 /**
@@ -25,5 +28,13 @@ public class LocalResteasyProviderFactory extends ResteasyProviderFactoryImpl
    public RuntimeType getRuntimeType()
    {
       return RuntimeType.CLIENT;
+   }
+
+   @Override
+   protected void initializeUtils()
+   {
+      clientUtil = new ClientProviderFactoryUtil(this);
+      serverUtil = NOOPServerProviderFactoryUtil.INSTANCE;
+      runtimeDelegateUtil = new RuntimeDelegateUtil();
    }
 }

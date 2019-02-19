@@ -26,7 +26,7 @@ import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 /**
  * 
  */
-public final class ServerProviderFactoryUtil
+public class ServerProviderFactoryUtil
 {
    private final ResteasyProviderFactoryImpl rpf;
    private MediaTypeMap<SortedKey<MessageBodyReader>> serverMessageBodyReaders;
