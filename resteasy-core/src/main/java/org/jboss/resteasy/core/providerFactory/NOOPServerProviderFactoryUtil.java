@@ -1,9 +1,11 @@
 package org.jboss.resteasy.core.providerFactory;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.ReaderInterceptor;
@@ -31,54 +33,70 @@ public final class NOOPServerProviderFactoryUtil extends ServerProviderFactoryUt
       //NOOP
    }
    
+   @Override
    protected JaxrsInterceptorRegistry<ReaderInterceptor> getServerReaderInterceptorRegistry(ResteasyProviderFactory parent)
    {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    protected JaxrsInterceptorRegistry<WriterInterceptor> getServerWriterInterceptorRegistry(ResteasyProviderFactory parent)
    {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    protected JaxrsInterceptorRegistry<ContainerRequestFilter> getContainerRequestFilterRegistry(ResteasyProviderFactory parent)
    {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    protected JaxrsInterceptorRegistry<ContainerResponseFilter> getContainerResponseFilterRegistry(ResteasyProviderFactory parent)
    {
       throw new UnsupportedOperationException();
    }
-   
+
+   @Override
+   protected Set<DynamicFeature> getServerDynamicFeatures(ResteasyProviderFactory parent)
+   {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
    protected void processProviderContracts(Class provider, Integer priorityOverride, boolean isBuiltin,
          Map<Class<?>, Integer> contracts, Map<Class<?>, Integer> newContracts, ResteasyProviderFactoryImpl parent)
    {
       //NOOP
    }
    
+   @Override
    protected void processProviderInstanceContracts(Object provider, Map<Class<?>, Integer> contracts,
          Integer priorityOverride, boolean builtIn, Map<Class<?>, Integer> newContracts, ResteasyProviderFactoryImpl parent)
    {
       //NOOP
    }
    
+   @Override
    protected MediaTypeMap<SortedKey<MessageBodyReader>> getServerMessageBodyReaders(ResteasyProviderFactoryImpl parent)
    {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    protected MediaTypeMap<SortedKey<MessageBodyWriter>> getServerMessageBodyWriters(ResteasyProviderFactoryImpl parent)
    {
       throw new UnsupportedOperationException();
    }
 
+   @Override
    protected void addMessageBodyReader(MessageBodyReader provider, Class<?> providerClass, int priority,
          boolean isBuiltin, ResteasyProviderFactoryImpl parent)
    {
       //NOOP
    }
 
+   @Override
    protected void addMessageBodyWriter(MessageBodyWriter provider, Class<?> providerClass, int priority,
          boolean isBuiltin, ResteasyProviderFactoryImpl parent)
    {

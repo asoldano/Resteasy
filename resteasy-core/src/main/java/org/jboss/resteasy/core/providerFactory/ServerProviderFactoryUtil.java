@@ -1,6 +1,8 @@
 package org.jboss.resteasy.core.providerFactory;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.Consumes;
@@ -8,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.RuntimeType;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
@@ -35,6 +38,7 @@ public class ServerProviderFactoryUtil
    private JaxrsInterceptorRegistry<ContainerResponseFilter> containerResponseFilterRegistry;
    private JaxrsInterceptorRegistry<ReaderInterceptor> serverReaderInterceptorRegistry;
    private JaxrsInterceptorRegistry<WriterInterceptor> serverWriterInterceptorRegistry;
+   private Set<DynamicFeature> serverDynamicFeatures;
 
    public ServerProviderFactoryUtil(ResteasyProviderFactoryImpl rpf)
    {
@@ -43,6 +47,8 @@ public class ServerProviderFactoryUtil
 
    protected void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
    {
+      serverDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getServerDynamicFeatures());
+
       serverMessageBodyReaders = parent == null ? new MediaTypeMap<>() : parent.getServerMessageBodyReaders().clone();
       serverMessageBodyWriters = parent == null ? new MediaTypeMap<>() : parent.getServerMessageBodyWriters().clone();
       containerRequestFilterRegistry = parent == null ? new ContainerRequestFilterRegistryImpl(rpf) : parent.getContainerRequestFilterRegistry().clone(rpf);
@@ -77,6 +83,13 @@ public class ServerProviderFactoryUtil
       if (containerResponseFilterRegistry == null && parent != null)
          return parent.getContainerResponseFilterRegistry();
       return containerResponseFilterRegistry;
+   }
+
+   protected Set<DynamicFeature> getServerDynamicFeatures(ResteasyProviderFactory parent)
+   {
+      if (serverDynamicFeatures == null && parent != null)
+         return parent.getServerDynamicFeatures();
+      return serverDynamicFeatures;
    }
    
    protected void processProviderContracts(Class provider, Integer priorityOverride, boolean isBuiltin,
@@ -174,6 +187,29 @@ public class ServerProviderFactoryUtil
          }
          newContracts.put(WriterInterceptor.class, priority);
       }
+      if (CommonProviderFactoryUtil.isA(provider, DynamicFeature.class, contracts))
+      {
+         ConstrainedTo constrainedTo = (ConstrainedTo) provider.getAnnotation(ConstrainedTo.class);
+         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, DynamicFeature.class, provider);
+         if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
+         {
+            if (serverDynamicFeatures == null)
+            {
+               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
+            }
+            serverDynamicFeatures.add((DynamicFeature) rpf.injectedInstance(provider));
+         }
+         if (constrainedTo == null)
+         {
+            if (serverDynamicFeatures == null)
+            {
+               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
+            }
+            serverDynamicFeatures.add((DynamicFeature) rpf.injectedInstance(provider));
+         }
+         newContracts.put(DynamicFeature.class, priority);
+      }
+
    }
    
    protected void processProviderInstanceContracts(Object provider, Map<Class<?>, Integer> contracts,
@@ -268,6 +304,28 @@ public class ServerProviderFactoryUtil
             serverWriterInterceptorRegistry.registerSingleton((WriterInterceptor) provider, priority);
          }
          newContracts.put(WriterInterceptor.class, priority);
+      }
+      if (CommonProviderFactoryUtil.isA(provider, DynamicFeature.class, contracts))
+      {
+         ConstrainedTo constrainedTo = (ConstrainedTo) provider.getClass().getAnnotation(ConstrainedTo.class);
+         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, DynamicFeature.class, provider.getClass());
+         if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
+         {
+            if (serverDynamicFeatures == null)
+            {
+               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
+            }
+            serverDynamicFeatures.add((DynamicFeature) provider);
+         }
+         if (constrainedTo == null)
+         {
+            if (serverDynamicFeatures == null)
+            {
+               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
+            }
+            serverDynamicFeatures.add((DynamicFeature) provider);
+         }
+         newContracts.put(DynamicFeature.class, priority);
       }
    }
    

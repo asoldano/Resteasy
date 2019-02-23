@@ -91,8 +91,8 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    private Map<Class<?>, AsyncClientResponseProvider> asyncClientResponseProviders;
    private Map<Class<?>, AsyncStreamProvider> asyncStreamProviders;
    private Map<Class<?>, MediaTypeMap<SortedKey<ContextResolver>>> contextResolvers;
-   private Map<Type, ContextInjector> contextInjectors;
-   private Map<Type, ContextInjector> asyncContextInjectors;
+   private Map<Type, ContextInjector> contextInjectors; //COMMON
+   private Map<Type, ContextInjector> asyncContextInjectors; //COMMON
    private Set<ExtSortedKey<ParamConverterProvider>> sortedParamConverterProviders;
    private Map<Class<?>, Class<? extends StringParameterUnmarshaller>> stringParameterUnmarshallers;
    protected Map<Class<?>, Map<Class<?>, Integer>> classContracts;
@@ -100,8 +100,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    private boolean registerBuiltins = true;
    private InjectorFactory injectorFactory;
    private ResteasyProviderFactoryImpl parent;
-   private Set<DynamicFeature> serverDynamicFeatures;
-   private Set<DynamicFeature> clientDynamicFeatures;
    private Map<String, Object> properties;
    private Map<Class<?>, Class<? extends RxInvokerProvider<?>>> reactiveClasses;
    private ResourceBuilder resourceBuilder;
@@ -175,8 +173,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    protected void initialize(ResteasyProviderFactoryImpl parent)
    {
-      serverDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getServerDynamicFeatures());
-      clientDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getClientDynamicFeatures());
       enabledFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getEnabledFeatures());
       properties = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getProperties());
       providerClasses = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getProviderClasses());
@@ -214,16 +210,12 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    public Set<DynamicFeature> getServerDynamicFeatures()
    {
-      if (serverDynamicFeatures == null && parent != null)
-         return parent.getServerDynamicFeatures();
-      return serverDynamicFeatures;
+      return serverUtil.getServerDynamicFeatures(parent);
    }
 
    public Set<DynamicFeature> getClientDynamicFeatures()
    {
-      if (clientDynamicFeatures == null && parent != null)
-         return parent.getClientDynamicFeatures();
-      return clientDynamicFeatures;
+      return clientUtil.getClientDynamicFeatures(parent);
    }
 
    protected MediaTypeMap<SortedKey<MessageBodyReader>> getServerMessageBodyReaders()
@@ -1015,41 +1007,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
             throw new RuntimeException(e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, DynamicFeature.class, contracts))
-      {
-         ConstrainedTo constrainedTo = (ConstrainedTo) provider.getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, DynamicFeature.class, provider);
-         if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
-         {
-            if (serverDynamicFeatures == null)
-            {
-               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
-            }
-            serverDynamicFeatures.add((DynamicFeature) injectedInstance(provider));
-         }
-         if (constrainedTo != null && constrainedTo.value() == RuntimeType.CLIENT)
-         {
-            if (clientDynamicFeatures == null)
-            {
-               clientDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getClientDynamicFeatures());
-            }
-            clientDynamicFeatures.add((DynamicFeature) injectedInstance(provider));
-         }
-         if (constrainedTo == null)
-         {
-            if (serverDynamicFeatures == null)
-            {
-               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
-            }
-            serverDynamicFeatures.add((DynamicFeature) injectedInstance(provider));
-            if (clientDynamicFeatures == null)
-            {
-               clientDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getClientDynamicFeatures());
-            }
-            clientDynamicFeatures.add((DynamicFeature) injectedInstance(provider));
-         }
-         newContracts.put(DynamicFeature.class, priority);
-      }
       if (CommonProviderFactoryUtil.isA(provider, Feature.class, contracts))
       {
          ConstrainedTo constrainedTo = (ConstrainedTo) provider.getAnnotation(ConstrainedTo.class);
@@ -1225,41 +1182,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       {
          this.injectorFactory = (InjectorFactory) provider;
          newContracts.put(InjectorFactory.class, 0);
-      }
-      if (CommonProviderFactoryUtil.isA(provider, DynamicFeature.class, contracts))
-      {
-         ConstrainedTo constrainedTo = (ConstrainedTo) provider.getClass().getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, DynamicFeature.class, provider.getClass());
-         if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
-         {
-            if (serverDynamicFeatures == null)
-            {
-               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
-            }
-            serverDynamicFeatures.add((DynamicFeature) provider);
-         }
-         if (constrainedTo != null && constrainedTo.value() == RuntimeType.CLIENT)
-         {
-            if (clientDynamicFeatures == null)
-            {
-               clientDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getClientDynamicFeatures());
-            }
-            clientDynamicFeatures.add((DynamicFeature) provider);
-         }
-         if (constrainedTo == null)
-         {
-            if (serverDynamicFeatures == null)
-            {
-               serverDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getServerDynamicFeatures());
-            }
-            serverDynamicFeatures.add((DynamicFeature) provider);
-            if (clientDynamicFeatures == null)
-            {
-               clientDynamicFeatures = new CopyOnWriteArraySet<DynamicFeature>(parent.getClientDynamicFeatures());
-            }
-            clientDynamicFeatures.add((DynamicFeature) provider);
-         }
-         newContracts.put(DynamicFeature.class, priority);
       }
       if (CommonProviderFactoryUtil.isA(provider, Feature.class, contracts))
       {
