@@ -87,7 +87,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    protected ServerProviderFactoryUtil serverUtil;
    protected RuntimeDelegateUtil runtimeDelegateUtil;
    private Map<Class<?>, SortedKey<ExceptionMapper>> sortedExceptionMappers;
-   private Map<Class<?>, AsyncClientResponseProvider> asyncClientResponseProviders;
    private Map<Class<?>, MediaTypeMap<SortedKey<ContextResolver>>> contextResolvers;
    private Map<Type, ContextInjector> contextInjectors; //COMMON
    private Map<Type, ContextInjector> asyncContextInjectors; //COMMON
@@ -99,7 +98,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    private InjectorFactory injectorFactory;
    private ResteasyProviderFactoryImpl parent;
    private Map<String, Object> properties;
-   private Map<Class<?>, Class<? extends RxInvokerProvider<?>>> reactiveClasses;
    private ResourceBuilder resourceBuilder;
    protected Set<Feature> enabledFeatures;
    protected Set<Class<?>> providerClasses;
@@ -142,12 +140,12 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       else
       {
          this.parent = (ResteasyProviderFactoryImpl) parent;
+         clientUtil.initializeDefault();
          providerClasses = new CopyOnWriteArraySet<>();
          providerInstances = new CopyOnWriteArraySet<>();
          properties = new ConcurrentHashMap<>();
          properties.putAll(parent.getProperties());
          enabledFeatures = new CopyOnWriteArraySet<>();
-         reactiveClasses = new ConcurrentHashMap<>();
          resourceBuilder = new ResourceBuilder();
       }
    }
@@ -177,7 +175,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       providerInstances = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getProviderInstances());
       classContracts = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getClassContracts());
       sortedExceptionMappers = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getSortedExceptionMappers());
-      asyncClientResponseProviders = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncClientResponseProviders());
       contextResolvers = new ConcurrentHashMap<>();
       if (parent != null)
       {
@@ -190,7 +187,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       asyncContextInjectors = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncContextInjectors());
       sortedParamConverterProviders = Collections.synchronizedSortedSet(parent == null ? new TreeSet<>() : new TreeSet<>(parent.getSortedParamConverterProviders()));
       stringParameterUnmarshallers = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getStringParameterUnmarshallers());
-      reactiveClasses = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.reactiveClasses);
 
       resourceBuilder = new ResourceBuilder();
 
@@ -253,9 +249,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    public Map<Class<?>, AsyncClientResponseProvider> getAsyncClientResponseProviders()
    {
-      if (asyncClientResponseProviders == null && parent != null)
-         return parent.getAsyncClientResponseProviders();
-      return asyncClientResponseProviders;
+      return clientUtil.getAsyncClientResponseProviders(parent);
    }
 
    public Map<Type, ContextInjector> getContextInjectors()
@@ -618,20 +612,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       sortedExceptionMappers.put(exceptionClass, candidateExceptionMapper);
    }
 
-   private void addAsyncClientResponseProvider(AsyncClientResponseProvider provider, Class providerClass)
-   {
-      Type asyncType = Types.getActualTypeArgumentsOfAnInterface(providerClass, AsyncClientResponseProvider.class)[0];
-      CommonProviderFactoryUtil.injectProperties(this, provider.getClass(), provider);
-
-      Class<?> asyncClass = Types.getRawType(asyncType);
-      if (asyncClientResponseProviders == null)
-      {
-         asyncClientResponseProviders = new ConcurrentHashMap<Class<?>, AsyncClientResponseProvider>();
-         asyncClientResponseProviders.putAll(parent.getAsyncClientResponseProviders());
-      }
-      asyncClientResponseProviders.put(asyncClass, provider);
-   }
-
    private void addContextInjector(ContextInjector provider, Class providerClass)
    {
       Type[] typeArgs = Types.getActualTypeArgumentsOfAnInterface(providerClass, ContextInjector.class);
@@ -888,20 +868,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateExceptionMapper(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncClientResponseProvider.class, contracts))
-      {
-         try
-         {
-            addAsyncClientResponseProvider(
-                  createProviderInstance((Class<? extends AsyncClientResponseProvider>) provider), provider);
-            newContracts.put(AsyncClientResponseProvider.class,
-                  CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncClientResponseProvider.class, provider));
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncClientResponseProvider(), e);
-         }
-      }
       if (CommonProviderFactoryUtil.isA(provider, ContextResolver.class, contracts))
       {
          try
@@ -959,17 +925,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
             }
          }
          newContracts.put(Feature.class, priority);
-      }
-      if (CommonProviderFactoryUtil.isA(provider, RxInvokerProvider.class, contracts))
-      {
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, RxInvokerProvider.class, provider);
-         newContracts.put(RxInvokerProvider.class, priority);
-         Class<?> clazz = Types.getTemplateParameterOfInterface(provider, RxInvokerProvider.class);
-         clazz = Types.getTemplateParameterOfInterface(clazz, RxInvoker.class);
-         if (clazz != null)
-         {
-            reactiveClasses.put(clazz, provider);
-         }
       }
       if (CommonProviderFactoryUtil.isA(provider, ResourceClassProcessor.class, contracts))
       {
@@ -1049,20 +1004,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
          catch (Exception e)
          {
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateExceptionMapper(), e);
-         }
-      }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncClientResponseProvider.class, contracts))
-      {
-         try
-         {
-            addAsyncClientResponseProvider((AsyncClientResponseProvider) provider, provider.getClass());
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncClientResponseProvider.class,
-                  provider.getClass());
-            newContracts.put(AsyncClientResponseProvider.class, priority);
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncClientResponseProvider(), e);
          }
       }
       if (CommonProviderFactoryUtil.isA(provider, ContextResolver.class, contracts))
@@ -1732,17 +1673,12 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    public RxInvokerProvider<?> getRxInvokerProviderFromReactiveClass(Class<?> clazz)
    {
-      Class<? extends RxInvokerProvider> rxInvokerProviderClass = reactiveClasses.get(clazz);
-      if (rxInvokerProviderClass != null)
-      {
-         return createProviderInstance(rxInvokerProviderClass);
-      }
-      return null;
+      return clientUtil.getRxInvokerProviderFromReactiveClass(clazz);
    }
 
    public boolean isReactive(Class<?> clazz)
    {
-      return reactiveClasses.keySet().contains(clazz);
+      return clientUtil.isReactive(clazz);
    }
 
    private void addResourceClassProcessor(Class<ResourceClassProcessor> processorClass, int priority)

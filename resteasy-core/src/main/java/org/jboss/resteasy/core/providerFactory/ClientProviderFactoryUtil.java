@@ -1,7 +1,9 @@
 package org.jboss.resteasy.core.providerFactory;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.ws.rs.ConstrainedTo;
@@ -10,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.RuntimeType;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseFilter;
+import javax.ws.rs.client.RxInvoker;
+import javax.ws.rs.client.RxInvokerProvider;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -23,8 +27,10 @@ import org.jboss.resteasy.core.interception.jaxrs.ClientResponseFilterRegistryIm
 import org.jboss.resteasy.core.interception.jaxrs.ReaderInterceptorRegistryImpl;
 import org.jboss.resteasy.core.interception.jaxrs.WriterInterceptorRegistryImpl;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.spi.AsyncClientResponseProvider;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
+import org.jboss.resteasy.spi.util.Types;
 
 /**
  * 
@@ -39,10 +45,17 @@ public final class ClientProviderFactoryUtil
    private JaxrsInterceptorRegistry<ReaderInterceptor> clientReaderInterceptorRegistry;
    private JaxrsInterceptorRegistry<WriterInterceptor> clientWriterInterceptorRegistry;
    private Set<DynamicFeature> clientDynamicFeatures;
+   private Map<Class<?>, AsyncClientResponseProvider> asyncClientResponseProviders;
+   private Map<Class<?>, Class<? extends RxInvokerProvider<?>>> reactiveClasses;
 
    public ClientProviderFactoryUtil(ResteasyProviderFactoryImpl rpf)
    {
       this.rpf = rpf;
+   }
+   
+   protected void initializeDefault()
+   {
+      reactiveClasses = new ConcurrentHashMap<>();
    }
    
    protected void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
@@ -55,6 +68,8 @@ public final class ClientProviderFactoryUtil
       clientWriterInterceptorRegistry = parent == null ? new WriterInterceptorRegistryImpl(rpf) : parent.getClientWriterInterceptorRegistry().clone(rpf);
 
       clientDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getClientDynamicFeatures());
+      asyncClientResponseProviders = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncClientResponseProviders());
+      reactiveClasses = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.clientUtil.reactiveClasses);
    }
    
    protected JaxrsInterceptorRegistry<ReaderInterceptor> getClientReaderInterceptorRegistry(ResteasyProviderFactory parent)
@@ -90,6 +105,28 @@ public final class ClientProviderFactoryUtil
       if (clientDynamicFeatures == null && parent != null)
          return parent.getClientDynamicFeatures();
       return clientDynamicFeatures;
+   }
+
+   protected Map<Class<?>, AsyncClientResponseProvider> getAsyncClientResponseProviders(ResteasyProviderFactory parent)
+   {
+      if (asyncClientResponseProviders == null && parent != null)
+         return parent.getAsyncClientResponseProviders();
+      return asyncClientResponseProviders;
+   }
+
+   protected RxInvokerProvider<?> getRxInvokerProviderFromReactiveClass(Class<?> clazz)
+   {
+      Class<? extends RxInvokerProvider> rxInvokerProviderClass = reactiveClasses.get(clazz);
+      if (rxInvokerProviderClass != null)
+      {
+         return rpf.createProviderInstance(rxInvokerProviderClass);
+      }
+      return null;
+   }
+
+   protected boolean isReactive(Class<?> clazz)
+   {
+      return reactiveClasses.keySet().contains(clazz);
    }
 
    protected void processProviderContracts(Class provider, Integer priorityOverride, boolean isBuiltin,
@@ -209,6 +246,31 @@ public final class ClientProviderFactoryUtil
          }
          newContracts.put(DynamicFeature.class, priority);
       }
+      if (CommonProviderFactoryUtil.isA(provider, AsyncClientResponseProvider.class, contracts))
+      {
+         try
+         {
+            addAsyncClientResponseProvider(
+                  rpf.createProviderInstance((Class<? extends AsyncClientResponseProvider>) provider), provider, parent);
+            newContracts.put(AsyncClientResponseProvider.class,
+                  CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncClientResponseProvider.class, provider));
+         }
+         catch (Exception e)
+         {
+            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncClientResponseProvider(), e);
+         }
+      }
+      if (CommonProviderFactoryUtil.isA(provider, RxInvokerProvider.class, contracts))
+      {
+         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, RxInvokerProvider.class, provider);
+         newContracts.put(RxInvokerProvider.class, priority);
+         Class<?> clazz = Types.getTemplateParameterOfInterface(provider, RxInvokerProvider.class);
+         clazz = Types.getTemplateParameterOfInterface(clazz, RxInvoker.class);
+         if (clazz != null)
+         {
+            reactiveClasses.put(clazz, provider);
+         }
+      }
    }
    
    protected void processProviderInstanceContracts(Object provider, Map<Class<?>, Integer> contracts,
@@ -326,6 +388,20 @@ public final class ClientProviderFactoryUtil
          }
          newContracts.put(DynamicFeature.class, priority);
       }
+      if (CommonProviderFactoryUtil.isA(provider, AsyncClientResponseProvider.class, contracts))
+      {
+         try
+         {
+            addAsyncClientResponseProvider((AsyncClientResponseProvider) provider, provider.getClass(), parent);
+            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncClientResponseProvider.class,
+                  provider.getClass());
+            newContracts.put(AsyncClientResponseProvider.class, priority);
+         }
+         catch (Exception e)
+         {
+            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncClientResponseProvider(), e);
+         }
+      }
    }
 
    protected MediaTypeMap<SortedKey<MessageBodyReader>> getClientMessageBodyReaders(ResteasyProviderFactoryImpl parent)
@@ -429,4 +505,19 @@ public final class ClientProviderFactoryUtil
          }
       }
    }
+
+   private void addAsyncClientResponseProvider(AsyncClientResponseProvider provider, Class providerClass, ResteasyProviderFactory parent)
+   {
+      Type asyncType = Types.getActualTypeArgumentsOfAnInterface(providerClass, AsyncClientResponseProvider.class)[0];
+      CommonProviderFactoryUtil.injectProperties(rpf, provider.getClass(), provider);
+
+      Class<?> asyncClass = Types.getRawType(asyncType);
+      if (asyncClientResponseProviders == null)
+      {
+         asyncClientResponseProviders = new ConcurrentHashMap<Class<?>, AsyncClientResponseProvider>();
+         asyncClientResponseProviders.putAll(parent.getAsyncClientResponseProviders());
+      }
+      asyncClientResponseProviders.put(asyncClass, provider);
+   }
+
 }

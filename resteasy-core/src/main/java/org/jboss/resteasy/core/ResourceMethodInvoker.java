@@ -224,7 +224,7 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
 
    public void registryUpdated(JaxrsInterceptorRegistry registry)
    {
-      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(parentProviderFactory);
+      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(parentProviderFactory); //TODO use a server side only version of RPF
       for (DynamicFeature feature : parentProviderFactory.getServerDynamicFeatures())
       {
          feature.configure(resourceInfo, new FeatureContextDelegate(resourceMethodProviderFactory));
