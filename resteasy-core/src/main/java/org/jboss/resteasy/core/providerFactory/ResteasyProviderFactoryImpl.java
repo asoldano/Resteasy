@@ -87,9 +87,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    protected ServerProviderFactoryUtil serverUtil;
    protected RuntimeDelegateUtil runtimeDelegateUtil;
    private Map<Class<?>, SortedKey<ExceptionMapper>> sortedExceptionMappers;
-   private Map<Class<?>, AsyncResponseProvider> asyncResponseProviders;
    private Map<Class<?>, AsyncClientResponseProvider> asyncClientResponseProviders;
-   private Map<Class<?>, AsyncStreamProvider> asyncStreamProviders;
    private Map<Class<?>, MediaTypeMap<SortedKey<ContextResolver>>> contextResolvers;
    private Map<Type, ContextInjector> contextInjectors; //COMMON
    private Map<Type, ContextInjector> asyncContextInjectors; //COMMON
@@ -179,9 +177,7 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       providerInstances = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getProviderInstances());
       classContracts = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getClassContracts());
       sortedExceptionMappers = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getSortedExceptionMappers());
-      asyncResponseProviders = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncResponseProviders());
       asyncClientResponseProviders = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncClientResponseProviders());
-      asyncStreamProviders = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncStreamProviders());
       contextResolvers = new ConcurrentHashMap<>();
       if (parent != null)
       {
@@ -247,9 +243,12 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
 
    public Map<Class<?>, AsyncResponseProvider> getAsyncResponseProviders()
    {
-      if (asyncResponseProviders == null && parent != null)
-         return parent.getAsyncResponseProviders();
-      return asyncResponseProviders;
+      return serverUtil.getAsyncResponseProviders(parent);
+   }
+
+   public Map<Class<?>, AsyncStreamProvider> getAsyncStreamProviders()
+   {
+      return serverUtil.getAsyncStreamProviders(parent);
    }
 
    public Map<Class<?>, AsyncClientResponseProvider> getAsyncClientResponseProviders()
@@ -257,13 +256,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       if (asyncClientResponseProviders == null && parent != null)
          return parent.getAsyncClientResponseProviders();
       return asyncClientResponseProviders;
-   }
-
-   public Map<Class<?>, AsyncStreamProvider> getAsyncStreamProviders()
-   {
-      if (asyncStreamProviders == null && parent != null)
-         return parent.getAsyncStreamProviders();
-      return asyncStreamProviders;
    }
 
    public Map<Type, ContextInjector> getContextInjectors()
@@ -626,19 +618,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
       sortedExceptionMappers.put(exceptionClass, candidateExceptionMapper);
    }
 
-   private void addAsyncResponseProvider(AsyncResponseProvider provider, Class providerClass)
-   {
-      Type asyncType = Types.getActualTypeArgumentsOfAnInterface(providerClass, AsyncResponseProvider.class)[0];
-      CommonProviderFactoryUtil.injectProperties(this, provider.getClass(), provider);
-      Class<?> asyncClass = Types.getRawType(asyncType);
-      if (asyncResponseProviders == null)
-      {
-         asyncResponseProviders = new ConcurrentHashMap<Class<?>, AsyncResponseProvider>();
-         asyncResponseProviders.putAll(parent.getAsyncResponseProviders());
-      }
-      asyncResponseProviders.put(asyncClass, provider);
-   }
-
    private void addAsyncClientResponseProvider(AsyncClientResponseProvider provider, Class providerClass)
    {
       Type asyncType = Types.getActualTypeArgumentsOfAnInterface(providerClass, AsyncClientResponseProvider.class)[0];
@@ -651,19 +630,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
          asyncClientResponseProviders.putAll(parent.getAsyncClientResponseProviders());
       }
       asyncClientResponseProviders.put(asyncClass, provider);
-   }
-
-   private void addAsyncStreamProvider(AsyncStreamProvider provider, Class providerClass)
-   {
-      Type asyncType = Types.getActualTypeArgumentsOfAnInterface(providerClass, AsyncStreamProvider.class)[0];
-      CommonProviderFactoryUtil.injectProperties(this, provider.getClass(), provider);
-      Class<?> asyncClass = Types.getRawType(asyncType);
-      if (asyncStreamProviders == null)
-      {
-         asyncStreamProviders = new ConcurrentHashMap<Class<?>, AsyncStreamProvider>();
-         asyncStreamProviders.putAll(parent.getAsyncStreamProviders());
-      }
-      asyncStreamProviders.put(asyncClass, provider);
    }
 
    private void addContextInjector(ContextInjector provider, Class providerClass)
@@ -922,20 +888,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateExceptionMapper(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncResponseProvider.class, contracts))
-      {
-         try
-         {
-            addAsyncResponseProvider(createProviderInstance((Class<? extends AsyncResponseProvider>) provider),
-                  provider);
-            newContracts.put(AsyncResponseProvider.class,
-                  CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncResponseProvider.class, provider));
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncResponseProvider(), e);
-         }
-      }
       if (CommonProviderFactoryUtil.isA(provider, AsyncClientResponseProvider.class, contracts))
       {
          try
@@ -948,19 +900,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
          catch (Exception e)
          {
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncClientResponseProvider(), e);
-         }
-      }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncStreamProvider.class, contracts))
-      {
-         try
-         {
-            addAsyncStreamProvider(createProviderInstance((Class<? extends AsyncStreamProvider>) provider), provider);
-            newContracts.put(AsyncStreamProvider.class,
-                  CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncStreamProvider.class, provider));
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncStreamProvider(), e);
          }
       }
       if (CommonProviderFactoryUtil.isA(provider, ContextResolver.class, contracts))
@@ -1112,19 +1051,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateExceptionMapper(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncResponseProvider.class, contracts))
-      {
-         try
-         {
-            addAsyncResponseProvider((AsyncResponseProvider) provider, provider.getClass());
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncResponseProvider.class, provider.getClass());
-            newContracts.put(AsyncResponseProvider.class, priority);
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncResponseProvider(), e);
-         }
-      }
       if (CommonProviderFactoryUtil.isA(provider, AsyncClientResponseProvider.class, contracts))
       {
          try
@@ -1137,19 +1063,6 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
          catch (Exception e)
          {
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncClientResponseProvider(), e);
-         }
-      }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncStreamProvider.class, contracts))
-      {
-         try
-         {
-            addAsyncStreamProvider((AsyncStreamProvider) provider, provider.getClass());
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncStreamProvider.class, provider.getClass());
-            newContracts.put(AsyncStreamProvider.class, priority);
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncStreamProvider(), e);
          }
       }
       if (CommonProviderFactoryUtil.isA(provider, ContextResolver.class, contracts))

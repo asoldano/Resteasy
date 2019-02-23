@@ -12,6 +12,8 @@ import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.WriterInterceptor;
 
 import org.jboss.resteasy.core.MediaTypeMap;
+import org.jboss.resteasy.spi.AsyncResponseProvider;
+import org.jboss.resteasy.spi.AsyncStreamProvider;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 
@@ -59,6 +61,18 @@ public final class NOOPServerProviderFactoryUtil extends ServerProviderFactoryUt
 
    @Override
    protected Set<DynamicFeature> getServerDynamicFeatures(ResteasyProviderFactory parent)
+   {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   protected Map<Class<?>, AsyncResponseProvider> getAsyncResponseProviders(ResteasyProviderFactory parent)
+   {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   protected Map<Class<?>, AsyncStreamProvider> getAsyncStreamProviders(ResteasyProviderFactory parent)
    {
       throw new UnsupportedOperationException();
    }
