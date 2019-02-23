@@ -2,7 +2,10 @@ package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.annotations.Stream;
 import org.jboss.resteasy.core.interception.jaxrs.PostMatchContainerRequestContext;
+import org.jboss.resteasy.core.providerFactory.NOOPClientProviderFactoryUtil;
 import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
+import org.jboss.resteasy.core.providerFactory.RuntimeDelegateUtil;
+import org.jboss.resteasy.core.providerFactory.ServerProviderFactoryUtil;
 import org.jboss.resteasy.core.registry.SegmentNode;
 import org.jboss.resteasy.plugins.server.resourcefactory.SingletonResource;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
@@ -108,7 +111,15 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
          }
       };
 
-      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(providerFactory);
+      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(providerFactory) {
+         @Override
+         protected void initializeUtils()
+         {
+            clientUtil = NOOPClientProviderFactoryUtil.INSTANCE;
+            serverUtil = new ServerProviderFactoryUtil(this);
+            runtimeDelegateUtil = new RuntimeDelegateUtil();
+         }
+      };
       for (DynamicFeature feature : providerFactory.getServerDynamicFeatures())
       {
          feature.configure(resourceInfo, new FeatureContextDelegate(resourceMethodProviderFactory));
@@ -224,7 +235,15 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
 
    public void registryUpdated(JaxrsInterceptorRegistry registry)
    {
-      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(parentProviderFactory); //TODO use a server side only version of RPF
+      this.resourceMethodProviderFactory = new ResteasyProviderFactoryImpl(parentProviderFactory) {
+         @Override
+         protected void initializeUtils()
+         {
+            clientUtil = NOOPClientProviderFactoryUtil.INSTANCE;
+            serverUtil = new ServerProviderFactoryUtil(this);
+            runtimeDelegateUtil = new RuntimeDelegateUtil();
+         }
+      };
       for (DynamicFeature feature : parentProviderFactory.getServerDynamicFeatures())
       {
          feature.configure(resourceInfo, new FeatureContextDelegate(resourceMethodProviderFactory));

@@ -35,7 +35,7 @@ import org.jboss.resteasy.spi.util.Types;
 /**
  * 
  */
-public final class ClientProviderFactoryUtil
+public class ClientProviderFactoryUtil
 {
    private final ResteasyProviderFactoryImpl rpf;
    private MediaTypeMap<SortedKey<MessageBodyReader>> clientMessageBodyReaders;

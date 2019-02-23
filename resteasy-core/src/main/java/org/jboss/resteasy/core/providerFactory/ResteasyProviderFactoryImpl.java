@@ -88,8 +88,8 @@ public class ResteasyProviderFactoryImpl extends ResteasyProviderFactory impleme
    protected RuntimeDelegateUtil runtimeDelegateUtil;
    private Map<Class<?>, SortedKey<ExceptionMapper>> sortedExceptionMappers;
    private Map<Class<?>, MediaTypeMap<SortedKey<ContextResolver>>> contextResolvers;
-   private Map<Type, ContextInjector> contextInjectors; //COMMON
-   private Map<Type, ContextInjector> asyncContextInjectors; //COMMON
+   private Map<Type, ContextInjector> contextInjectors;
+   private Map<Type, ContextInjector> asyncContextInjectors;
    private Set<ExtSortedKey<ParamConverterProvider>> sortedParamConverterProviders;
    private Map<Class<?>, Class<? extends StringParameterUnmarshaller>> stringParameterUnmarshallers;
    protected Map<Class<?>, Map<Class<?>, Integer>> classContracts;
