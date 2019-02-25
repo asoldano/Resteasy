@@ -59,7 +59,7 @@ public class ClientHelper
       reactiveClasses = new ConcurrentHashMap<>();
    }
 
-   protected void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
+   protected void initialize(ResteasyProviderFactoryImpl parent)
    {
       clientMessageBodyReaders = parent == null ? new MediaTypeMap<>() : parent.getClientMessageBodyReaders().clone();
       clientMessageBodyWriters = parent == null ? new MediaTypeMap<>() : parent.getClientMessageBodyWriters().clone();
@@ -70,7 +70,7 @@ public class ClientHelper
 
       clientDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getClientDynamicFeatures());
       asyncClientResponseProviders = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncClientResponseProviders());
-      reactiveClasses = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.clientUtil.reactiveClasses);
+      reactiveClasses = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.clientHelper.reactiveClasses);
    }
 
    protected JaxrsInterceptorRegistry<ReaderInterceptor> getClientReaderInterceptorRegistry(ResteasyProviderFactory parent)

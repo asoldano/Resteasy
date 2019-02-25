@@ -37,7 +37,7 @@ public final class NOOPClientHelper extends ClientHelper
    }
 
    @Override
-   protected void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
+   protected void initialize(ResteasyProviderFactoryImpl parent)
    {
       //NOOP
    }

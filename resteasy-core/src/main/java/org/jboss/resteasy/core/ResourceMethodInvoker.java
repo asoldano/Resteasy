@@ -4,7 +4,6 @@ import org.jboss.resteasy.annotations.Stream;
 import org.jboss.resteasy.core.interception.jaxrs.PostMatchContainerRequestContext;
 import org.jboss.resteasy.core.providerFactory.NOOPClientHelper;
 import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
-import org.jboss.resteasy.core.providerFactory.RuntimeDelegateUtil;
 import org.jboss.resteasy.core.providerFactory.ServerHelper;
 import org.jboss.resteasy.core.registry.SegmentNode;
 import org.jboss.resteasy.plugins.server.resourcefactory.SingletonResource;
@@ -115,9 +114,8 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
          @Override
          protected void initializeUtils()
          {
-            clientUtil = NOOPClientHelper.INSTANCE;
-            serverUtil = new ServerHelper(this);
-            runtimeDelegateUtil = new RuntimeDelegateUtil();
+            clientHelper = NOOPClientHelper.INSTANCE;
+            serverHelper = new ServerHelper(this);
          }
       };
       for (DynamicFeature feature : providerFactory.getServerDynamicFeatures())
@@ -239,9 +237,8 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
          @Override
          protected void initializeUtils()
          {
-            clientUtil = NOOPClientHelper.INSTANCE;
-            serverUtil = new ServerHelper(this);
-            runtimeDelegateUtil = new RuntimeDelegateUtil();
+            clientHelper = NOOPClientHelper.INSTANCE;
+            serverHelper = new ServerHelper(this);
          }
       };
       for (DynamicFeature feature : parentProviderFactory.getServerDynamicFeatures())

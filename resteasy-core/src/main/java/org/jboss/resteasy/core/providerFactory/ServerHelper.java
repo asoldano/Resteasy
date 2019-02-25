@@ -53,7 +53,7 @@ public class ServerHelper
       this.rpf = rpf;
    }
 
-   protected void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
+   protected void initialize(ResteasyProviderFactoryImpl parent)
    {
       serverDynamicFeatures = parent == null ? new CopyOnWriteArraySet<>() : new CopyOnWriteArraySet<>(parent.getServerDynamicFeatures());
       asyncResponseProviders = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getAsyncResponseProviders());

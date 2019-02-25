@@ -23,7 +23,6 @@ import org.jboss.resteasy.core.ThreadLocalResteasyProviderFactory;
 import org.jboss.resteasy.core.providerFactory.ClientHelper;
 import org.jboss.resteasy.core.providerFactory.NOOPServerHelper;
 import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
-import org.jboss.resteasy.core.providerFactory.RuntimeDelegateUtil;
 import org.jboss.resteasy.plugins.interceptors.AcceptEncodingGZIPFilter;
 import org.jboss.resteasy.plugins.interceptors.GZIPDecodingInterceptor;
 import org.jboss.resteasy.plugins.interceptors.GZIPEncodingInterceptor;
@@ -56,9 +55,8 @@ public class RegisterBuiltin
             @Override
             protected void initializeUtils()
             {
-               clientUtil = new ClientHelper(this);
-               serverUtil = NOOPServerHelper.INSTANCE;
-               runtimeDelegateUtil = new RuntimeDelegateUtil();
+               clientHelper = new ClientHelper(this);
+               serverHelper = NOOPServerHelper.INSTANCE;
             }
          };
          if (!rpf.isBuiltinsRegistered()) {

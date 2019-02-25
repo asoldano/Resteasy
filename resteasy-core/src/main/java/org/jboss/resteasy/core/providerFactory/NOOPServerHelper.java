@@ -31,7 +31,7 @@ public final class NOOPServerHelper extends ServerHelper
    }
 
    @Override
-   protected void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
+   protected void initialize(ResteasyProviderFactoryImpl parent)
    {
       //NOOP
    }
