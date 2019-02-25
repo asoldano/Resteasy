@@ -18,13 +18,14 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 
 /**
- * A ServerProviderFactoryUtil that does nothing, useful to save memory when creating a ResteasyProviderFactory for client side only
+ * A ServerHelper that does nothing, useful to save memory when creating a ResteasyProviderFactory for client side only
  */
-public final class NOOPServerProviderFactoryUtil extends ServerProviderFactoryUtil
+@SuppressWarnings("rawtypes")
+public final class NOOPServerHelper extends ServerHelper
 {
-   public static final NOOPServerProviderFactoryUtil INSTANCE = new NOOPServerProviderFactoryUtil(null);
+   public static final NOOPServerHelper INSTANCE = new NOOPServerHelper(null);
 
-   private NOOPServerProviderFactoryUtil(ResteasyProviderFactoryImpl rpf)
+   private NOOPServerHelper(final ResteasyProviderFactoryImpl rpf)
    {
       super(rpf);
    }
@@ -34,7 +35,7 @@ public final class NOOPServerProviderFactoryUtil extends ServerProviderFactoryUt
    {
       //NOOP
    }
-   
+
    @Override
    protected JaxrsInterceptorRegistry<ReaderInterceptor> getServerReaderInterceptorRegistry(ResteasyProviderFactory parent)
    {
@@ -83,14 +84,14 @@ public final class NOOPServerProviderFactoryUtil extends ServerProviderFactoryUt
    {
       //NOOP
    }
-   
+
    @Override
    protected void processProviderInstanceContracts(Object provider, Map<Class<?>, Integer> contracts,
          Integer priorityOverride, boolean builtIn, Map<Class<?>, Integer> newContracts, ResteasyProviderFactoryImpl parent)
    {
       //NOOP
    }
-   
+
    @Override
    protected MediaTypeMap<SortedKey<MessageBodyReader>> getServerMessageBodyReaders(ResteasyProviderFactoryImpl parent)
    {

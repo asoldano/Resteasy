@@ -32,9 +32,10 @@ import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 import org.jboss.resteasy.spi.util.Types;
 
 /**
- * 
+ *
  */
-public class ServerProviderFactoryUtil
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class ServerHelper
 {
    private final ResteasyProviderFactoryImpl rpf;
    private MediaTypeMap<SortedKey<MessageBodyReader>> serverMessageBodyReaders;
@@ -47,7 +48,7 @@ public class ServerProviderFactoryUtil
    private Map<Class<?>, AsyncResponseProvider> asyncResponseProviders;
    private Map<Class<?>, AsyncStreamProvider> asyncStreamProviders;
 
-   public ServerProviderFactoryUtil(ResteasyProviderFactoryImpl rpf)
+   public ServerHelper(final ResteasyProviderFactoryImpl rpf)
    {
       this.rpf = rpf;
    }
@@ -100,7 +101,7 @@ public class ServerProviderFactoryUtil
          return parent.getServerDynamicFeatures();
       return serverDynamicFeatures;
    }
-   
+
    protected Map<Class<?>, AsyncResponseProvider> getAsyncResponseProviders(ResteasyProviderFactory parent)
    {
       if (asyncResponseProviders == null && parent != null)
@@ -118,12 +119,12 @@ public class ServerProviderFactoryUtil
    protected void processProviderContracts(Class provider, Integer priorityOverride, boolean isBuiltin,
          Map<Class<?>, Integer> contracts, Map<Class<?>, Integer> newContracts, ResteasyProviderFactoryImpl parent)
    {
-      if (CommonProviderFactoryUtil.isA(provider, MessageBodyReader.class, contracts))
+      if (Utils.isA(provider, MessageBodyReader.class, contracts))
       {
          try
          {
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, MessageBodyReader.class, provider);
-            addMessageBodyReader(CommonProviderFactoryUtil.createProviderInstance(rpf, (Class<? extends MessageBodyReader>) provider), provider,
+            int priority = Utils.getPriority(priorityOverride, contracts, MessageBodyReader.class, provider);
+            addMessageBodyReader(Utils.createProviderInstance(rpf, (Class<? extends MessageBodyReader>) provider), provider,
                   priority, isBuiltin, parent);
             newContracts.put(MessageBodyReader.class, priority);
          }
@@ -132,12 +133,12 @@ public class ServerProviderFactoryUtil
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateMessageBodyReader(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, MessageBodyWriter.class, contracts))
+      if (Utils.isA(provider, MessageBodyWriter.class, contracts))
       {
          try
          {
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, MessageBodyWriter.class, provider);
-            addMessageBodyWriter(CommonProviderFactoryUtil.createProviderInstance(rpf, (Class<? extends MessageBodyWriter>) provider), provider,
+            int priority = Utils.getPriority(priorityOverride, contracts, MessageBodyWriter.class, provider);
+            addMessageBodyWriter(Utils.createProviderInstance(rpf, (Class<? extends MessageBodyWriter>) provider), provider,
                   priority, isBuiltin, parent);
             newContracts.put(MessageBodyWriter.class, priority);
          }
@@ -146,30 +147,30 @@ public class ServerProviderFactoryUtil
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateMessageBodyWriter(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, ContainerRequestFilter.class, contracts))
+      if (Utils.isA(provider, ContainerRequestFilter.class, contracts))
       {
          if (containerRequestFilterRegistry == null)
          {
             containerRequestFilterRegistry = parent.getContainerRequestFilterRegistry().clone(rpf);
          }
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, ContainerRequestFilter.class, provider);
+         int priority = Utils.getPriority(priorityOverride, contracts, ContainerRequestFilter.class, provider);
          containerRequestFilterRegistry.registerClass(provider, priority);
          newContracts.put(ContainerRequestFilter.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, ContainerResponseFilter.class, contracts))
+      if (Utils.isA(provider, ContainerResponseFilter.class, contracts))
       {
          if (containerResponseFilterRegistry == null)
          {
             containerResponseFilterRegistry = parent.getContainerResponseFilterRegistry().clone(rpf);
          }
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, ContainerResponseFilter.class, provider);
+         int priority = Utils.getPriority(priorityOverride, contracts, ContainerResponseFilter.class, provider);
          containerResponseFilterRegistry.registerClass(provider, priority);
          newContracts.put(ContainerResponseFilter.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, ReaderInterceptor.class, contracts))
+      if (Utils.isA(provider, ReaderInterceptor.class, contracts))
       {
          ConstrainedTo constrainedTo = (ConstrainedTo) provider.getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, ReaderInterceptor.class, provider);
+         int priority = Utils.getPriority(priorityOverride, contracts, ReaderInterceptor.class, provider);
          if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
          {
             if (serverReaderInterceptorRegistry == null)
@@ -188,10 +189,10 @@ public class ServerProviderFactoryUtil
          }
          newContracts.put(ReaderInterceptor.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, WriterInterceptor.class, contracts))
+      if (Utils.isA(provider, WriterInterceptor.class, contracts))
       {
          ConstrainedTo constrainedTo = (ConstrainedTo) provider.getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, WriterInterceptor.class, provider);
+         int priority = Utils.getPriority(priorityOverride, contracts, WriterInterceptor.class, provider);
          if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
          {
             if (serverWriterInterceptorRegistry == null)
@@ -210,10 +211,10 @@ public class ServerProviderFactoryUtil
          }
          newContracts.put(WriterInterceptor.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, DynamicFeature.class, contracts))
+      if (Utils.isA(provider, DynamicFeature.class, contracts))
       {
          ConstrainedTo constrainedTo = (ConstrainedTo) provider.getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, DynamicFeature.class, provider);
+         int priority = Utils.getPriority(priorityOverride, contracts, DynamicFeature.class, provider);
          if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
          {
             if (serverDynamicFeatures == null)
@@ -232,27 +233,27 @@ public class ServerProviderFactoryUtil
          }
          newContracts.put(DynamicFeature.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncResponseProvider.class, contracts))
+      if (Utils.isA(provider, AsyncResponseProvider.class, contracts))
       {
          try
          {
             addAsyncResponseProvider(rpf.createProviderInstance((Class<? extends AsyncResponseProvider>) provider),
                   provider, parent);
             newContracts.put(AsyncResponseProvider.class,
-                  CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncResponseProvider.class, provider));
+                  Utils.getPriority(priorityOverride, contracts, AsyncResponseProvider.class, provider));
          }
          catch (Exception e)
          {
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncResponseProvider(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncStreamProvider.class, contracts))
+      if (Utils.isA(provider, AsyncStreamProvider.class, contracts))
       {
          try
          {
             addAsyncStreamProvider(rpf.createProviderInstance((Class<? extends AsyncStreamProvider>) provider), provider, parent);
             newContracts.put(AsyncStreamProvider.class,
-                  CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncStreamProvider.class, provider));
+                  Utils.getPriority(priorityOverride, contracts, AsyncStreamProvider.class, provider));
          }
          catch (Exception e)
          {
@@ -261,15 +262,15 @@ public class ServerProviderFactoryUtil
       }
 
    }
-   
+
    protected void processProviderInstanceContracts(Object provider, Map<Class<?>, Integer> contracts,
          Integer priorityOverride, boolean builtIn, Map<Class<?>, Integer> newContracts, ResteasyProviderFactoryImpl parent)
    {
-      if (CommonProviderFactoryUtil.isA(provider, MessageBodyReader.class, contracts))
+      if (Utils.isA(provider, MessageBodyReader.class, contracts))
       {
          try
          {
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, MessageBodyReader.class, provider.getClass());
+            int priority = Utils.getPriority(priorityOverride, contracts, MessageBodyReader.class, provider.getClass());
             addMessageBodyReader((MessageBodyReader) provider, provider.getClass(), priority, builtIn, parent);
             newContracts.put(MessageBodyReader.class, priority);
          }
@@ -278,11 +279,11 @@ public class ServerProviderFactoryUtil
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateMessageBodyReader(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, MessageBodyWriter.class, contracts))
+      if (Utils.isA(provider, MessageBodyWriter.class, contracts))
       {
          try
          {
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, MessageBodyWriter.class, provider.getClass());
+            int priority = Utils.getPriority(priorityOverride, contracts, MessageBodyWriter.class, provider.getClass());
             addMessageBodyWriter((MessageBodyWriter) provider, provider.getClass(), priority, builtIn, parent);
             newContracts.put(MessageBodyWriter.class, priority);
          }
@@ -291,30 +292,30 @@ public class ServerProviderFactoryUtil
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateMessageBodyWriter(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, ContainerRequestFilter.class, contracts))
+      if (Utils.isA(provider, ContainerRequestFilter.class, contracts))
       {
          if (containerRequestFilterRegistry == null)
          {
             containerRequestFilterRegistry = parent.getContainerRequestFilterRegistry().clone(rpf);
          }
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, ContainerRequestFilter.class, provider.getClass());
+         int priority = Utils.getPriority(priorityOverride, contracts, ContainerRequestFilter.class, provider.getClass());
          containerRequestFilterRegistry.registerSingleton((ContainerRequestFilter) provider, priority);
          newContracts.put(ContainerRequestFilter.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, ContainerResponseFilter.class, contracts))
+      if (Utils.isA(provider, ContainerResponseFilter.class, contracts))
       {
          if (containerResponseFilterRegistry == null)
          {
             containerResponseFilterRegistry = parent.getContainerResponseFilterRegistry().clone(rpf);
          }
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, ContainerResponseFilter.class, provider.getClass());
+         int priority = Utils.getPriority(priorityOverride, contracts, ContainerResponseFilter.class, provider.getClass());
          containerResponseFilterRegistry.registerSingleton((ContainerResponseFilter) provider, priority);
          newContracts.put(ContainerResponseFilter.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, ReaderInterceptor.class, contracts))
+      if (Utils.isA(provider, ReaderInterceptor.class, contracts))
       {
          ConstrainedTo constrainedTo = (ConstrainedTo) provider.getClass().getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, ReaderInterceptor.class, provider.getClass());
+         int priority = Utils.getPriority(priorityOverride, contracts, ReaderInterceptor.class, provider.getClass());
          if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
          {
             if (serverReaderInterceptorRegistry == null)
@@ -333,10 +334,10 @@ public class ServerProviderFactoryUtil
          }
          newContracts.put(ReaderInterceptor.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, WriterInterceptor.class, contracts))
+      if (Utils.isA(provider, WriterInterceptor.class, contracts))
       {
          ConstrainedTo constrainedTo = (ConstrainedTo) provider.getClass().getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, WriterInterceptor.class, provider.getClass());
+         int priority = Utils.getPriority(priorityOverride, contracts, WriterInterceptor.class, provider.getClass());
          if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
          {
             if (serverWriterInterceptorRegistry == null)
@@ -355,10 +356,10 @@ public class ServerProviderFactoryUtil
          }
          newContracts.put(WriterInterceptor.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, DynamicFeature.class, contracts))
+      if (Utils.isA(provider, DynamicFeature.class, contracts))
       {
          ConstrainedTo constrainedTo = (ConstrainedTo) provider.getClass().getAnnotation(ConstrainedTo.class);
-         int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, DynamicFeature.class, provider.getClass());
+         int priority = Utils.getPriority(priorityOverride, contracts, DynamicFeature.class, provider.getClass());
          if (constrainedTo != null && constrainedTo.value() == RuntimeType.SERVER)
          {
             if (serverDynamicFeatures == null)
@@ -377,12 +378,12 @@ public class ServerProviderFactoryUtil
          }
          newContracts.put(DynamicFeature.class, priority);
       }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncResponseProvider.class, contracts))
+      if (Utils.isA(provider, AsyncResponseProvider.class, contracts))
       {
          try
          {
             addAsyncResponseProvider((AsyncResponseProvider) provider, provider.getClass(), parent);
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncResponseProvider.class, provider.getClass());
+            int priority = Utils.getPriority(priorityOverride, contracts, AsyncResponseProvider.class, provider.getClass());
             newContracts.put(AsyncResponseProvider.class, priority);
          }
          catch (Exception e)
@@ -390,12 +391,12 @@ public class ServerProviderFactoryUtil
             throw new RuntimeException(Messages.MESSAGES.unableToInstantiateAsyncResponseProvider(), e);
          }
       }
-      if (CommonProviderFactoryUtil.isA(provider, AsyncStreamProvider.class, contracts))
+      if (Utils.isA(provider, AsyncStreamProvider.class, contracts))
       {
          try
          {
             addAsyncStreamProvider((AsyncStreamProvider) provider, provider.getClass(), parent);
-            int priority = CommonProviderFactoryUtil.getPriority(priorityOverride, contracts, AsyncStreamProvider.class, provider.getClass());
+            int priority = Utils.getPriority(priorityOverride, contracts, AsyncStreamProvider.class, provider.getClass());
             newContracts.put(AsyncStreamProvider.class, priority);
          }
          catch (Exception e)
@@ -404,7 +405,7 @@ public class ServerProviderFactoryUtil
          }
       }
    }
-   
+
    protected MediaTypeMap<SortedKey<MessageBodyReader>> getServerMessageBodyReaders(ResteasyProviderFactoryImpl parent)
    {
       if (serverMessageBodyReaders == null && parent != null)
@@ -424,7 +425,7 @@ public class ServerProviderFactoryUtil
    {
       SortedKey<MessageBodyReader> key = new SortedKey<MessageBodyReader>(MessageBodyReader.class, provider,
             providerClass, priority, isBuiltin);
-      CommonProviderFactoryUtil.injectProperties(rpf, providerClass, provider);
+      Utils.injectProperties(rpf, providerClass, provider);
       Consumes consumeMime = provider.getClass().getAnnotation(Consumes.class);
       RuntimeType type = null;
       ConstrainedTo constrainedTo = providerClass.getAnnotation(ConstrainedTo.class);
@@ -465,7 +466,7 @@ public class ServerProviderFactoryUtil
    protected void addMessageBodyWriter(MessageBodyWriter provider, Class<?> providerClass, int priority,
          boolean isBuiltin, ResteasyProviderFactoryImpl parent)
    {
-      CommonProviderFactoryUtil.injectProperties(rpf, providerClass, provider);
+      Utils.injectProperties(rpf, providerClass, provider);
       Produces consumeMime = provider.getClass().getAnnotation(Produces.class);
       SortedKey<MessageBodyWriter> key = new SortedKey<MessageBodyWriter>(MessageBodyWriter.class, provider,
             providerClass, priority, isBuiltin);
@@ -510,7 +511,7 @@ public class ServerProviderFactoryUtil
    private void addAsyncResponseProvider(AsyncResponseProvider provider, Class providerClass, ResteasyProviderFactory parent)
    {
       Type asyncType = Types.getActualTypeArgumentsOfAnInterface(providerClass, AsyncResponseProvider.class)[0];
-      CommonProviderFactoryUtil.injectProperties(rpf, provider.getClass(), provider);
+      Utils.injectProperties(rpf, provider.getClass(), provider);
       Class<?> asyncClass = Types.getRawType(asyncType);
       if (asyncResponseProviders == null)
       {
@@ -523,7 +524,7 @@ public class ServerProviderFactoryUtil
    private void addAsyncStreamProvider(AsyncStreamProvider provider, Class providerClass, ResteasyProviderFactory parent)
    {
       Type asyncType = Types.getActualTypeArgumentsOfAnInterface(providerClass, AsyncStreamProvider.class)[0];
-      CommonProviderFactoryUtil.injectProperties(rpf, provider.getClass(), provider);
+      Utils.injectProperties(rpf, provider.getClass(), provider);
       Class<?> asyncClass = Types.getRawType(asyncType);
       if (asyncStreamProviders == null)
       {

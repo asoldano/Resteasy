@@ -2,10 +2,10 @@ package org.jboss.resteasy.core;
 
 import org.jboss.resteasy.annotations.Stream;
 import org.jboss.resteasy.core.interception.jaxrs.PostMatchContainerRequestContext;
-import org.jboss.resteasy.core.providerFactory.NOOPClientProviderFactoryUtil;
+import org.jboss.resteasy.core.providerFactory.NOOPClientHelper;
 import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.core.providerFactory.RuntimeDelegateUtil;
-import org.jboss.resteasy.core.providerFactory.ServerProviderFactoryUtil;
+import org.jboss.resteasy.core.providerFactory.ServerHelper;
 import org.jboss.resteasy.core.registry.SegmentNode;
 import org.jboss.resteasy.plugins.server.resourcefactory.SingletonResource;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
@@ -115,8 +115,8 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
          @Override
          protected void initializeUtils()
          {
-            clientUtil = NOOPClientProviderFactoryUtil.INSTANCE;
-            serverUtil = new ServerProviderFactoryUtil(this);
+            clientUtil = NOOPClientHelper.INSTANCE;
+            serverUtil = new ServerHelper(this);
             runtimeDelegateUtil = new RuntimeDelegateUtil();
          }
       };
@@ -239,8 +239,8 @@ public class ResourceMethodInvoker implements ResourceInvoker, JaxrsInterceptorR
          @Override
          protected void initializeUtils()
          {
-            clientUtil = NOOPClientProviderFactoryUtil.INSTANCE;
-            serverUtil = new ServerProviderFactoryUtil(this);
+            clientUtil = NOOPClientHelper.INSTANCE;
+            serverUtil = new ServerHelper(this);
             runtimeDelegateUtil = new RuntimeDelegateUtil();
          }
       };

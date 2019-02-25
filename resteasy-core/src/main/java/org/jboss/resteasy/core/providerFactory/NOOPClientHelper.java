@@ -18,13 +18,14 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 
 /**
- * 
+ * A ClientHelper that does nothing, useful to save memory when creating a ResteasyProviderFactory for server side only
  */
-public final class NOOPClientProviderFactoryUtil extends ClientProviderFactoryUtil
+@SuppressWarnings("rawtypes")
+public final class NOOPClientHelper extends ClientHelper
 {
-   public static final NOOPClientProviderFactoryUtil INSTANCE = new NOOPClientProviderFactoryUtil(null);
+   public static final NOOPClientHelper INSTANCE = new NOOPClientHelper(null);
 
-   public NOOPClientProviderFactoryUtil(ResteasyProviderFactoryImpl rpf)
+   public NOOPClientHelper(final ResteasyProviderFactoryImpl rpf)
    {
       super(rpf);
    }
@@ -34,13 +35,13 @@ public final class NOOPClientProviderFactoryUtil extends ClientProviderFactoryUt
    {
       //NOOP
    }
-   
+
    @Override
    protected void initializeRegistriesAndFilters(ResteasyProviderFactoryImpl parent)
    {
       //NOOP
    }
-   
+
    @Override
    protected JaxrsInterceptorRegistry<ReaderInterceptor> getClientReaderInterceptorRegistry(ResteasyProviderFactory parent)
    {
@@ -64,7 +65,7 @@ public final class NOOPClientProviderFactoryUtil extends ClientProviderFactoryUt
    {
       throw new UnsupportedOperationException();
    }
-   
+
    @Override
    protected Set<DynamicFeature> getClientDynamicFeatures(ResteasyProviderFactory parent)
    {
@@ -95,7 +96,7 @@ public final class NOOPClientProviderFactoryUtil extends ClientProviderFactoryUt
    {
       //NOOP
    }
-   
+
    @Override
    protected void processProviderInstanceContracts(Object provider, Map<Class<?>, Integer> contracts,
          Integer priorityOverride, boolean builtIn, Map<Class<?>, Integer> newContracts, ResteasyProviderFactoryImpl parent)

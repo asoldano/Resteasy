@@ -20,11 +20,10 @@ import javax.ws.rs.RuntimeType;
 import javax.ws.rs.ext.Providers;
 
 import org.jboss.resteasy.core.ThreadLocalResteasyProviderFactory;
-import org.jboss.resteasy.core.providerFactory.ClientProviderFactoryUtil;
-import org.jboss.resteasy.core.providerFactory.NOOPServerProviderFactoryUtil;
+import org.jboss.resteasy.core.providerFactory.ClientHelper;
+import org.jboss.resteasy.core.providerFactory.NOOPServerHelper;
 import org.jboss.resteasy.core.providerFactory.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.core.providerFactory.RuntimeDelegateUtil;
-import org.jboss.resteasy.core.providerFactory.ServerProviderFactoryUtil;
 import org.jboss.resteasy.plugins.interceptors.AcceptEncodingGZIPFilter;
 import org.jboss.resteasy.plugins.interceptors.GZIPDecodingInterceptor;
 import org.jboss.resteasy.plugins.interceptors.GZIPEncodingInterceptor;
@@ -57,8 +56,8 @@ public class RegisterBuiltin
             @Override
             protected void initializeUtils()
             {
-               clientUtil = new ClientProviderFactoryUtil(this);
-               serverUtil = NOOPServerProviderFactoryUtil.INSTANCE;
+               clientUtil = new ClientHelper(this);
+               serverUtil = NOOPServerHelper.INSTANCE;
                runtimeDelegateUtil = new RuntimeDelegateUtil();
             }
          };

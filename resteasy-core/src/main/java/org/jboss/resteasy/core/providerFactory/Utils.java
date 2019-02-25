@@ -14,9 +14,10 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.util.PickConstructor;
 
 /**
- * 
+ *
  */
-public final class CommonProviderFactoryUtil
+@SuppressWarnings({"rawtypes", "unchecked"})
+public final class Utils
 {
    static boolean isA(Class target, Class type, Map<Class<?>, Integer> contracts)
    {
@@ -36,7 +37,7 @@ public final class CommonProviderFactoryUtil
    {
       return isA(target.getClass(), type, contracts);
    }
-   
+
    static int getPriority(Integer override, Map<Class<?>, Integer> contracts, Class type, Class<?> component)
    {
       if (override != null)
@@ -54,7 +55,7 @@ public final class CommonProviderFactoryUtil
          return Priorities.USER;
       return priority.value();
    }
-   
+
    static void injectProperties(ResteasyProviderFactory rpf, Class declaring, Object obj)
    {
       rpf.getInjectorFactory().createPropertyInjector(declaring, rpf).inject(obj, false).toCompletableFuture()
@@ -72,7 +73,7 @@ public final class CommonProviderFactoryUtil
       rpf.getInjectorFactory().createPropertyInjector(obj.getClass(), rpf).inject(request, response, obj, false)
             .toCompletableFuture().getNow(null);
    }
-   
+
    static <T> T createProviderInstance(ResteasyProviderFactory rpf, Class<? extends T> clazz)
    {
       ConstructorInjector constructorInjector = createConstructorInjector(rpf, clazz);

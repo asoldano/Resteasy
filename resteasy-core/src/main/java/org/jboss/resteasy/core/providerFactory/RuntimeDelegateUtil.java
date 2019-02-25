@@ -34,14 +34,15 @@ import org.jboss.resteasy.specimpl.ResteasyUriBuilderImpl;
 import org.jboss.resteasy.specimpl.VariantListBuilderImpl;
 import org.jboss.resteasy.spi.LinkHeader;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class RuntimeDelegateUtil
 {
    private Map<Class<?>, HeaderDelegate> headerDelegates;
-  
+
    public RuntimeDelegateUtil()
    {
    }
-   
+
    protected void initialize(ResteasyProviderFactoryImpl parent)
    {
       headerDelegates = parent == null ? new ConcurrentHashMap<>() : new ConcurrentHashMap<>(parent.getHeaderDelegates());
@@ -56,7 +57,7 @@ public class RuntimeDelegateUtil
       addHeaderDelegateIfAbsent(javax.ws.rs.core.Link.class, LinkDelegate.INSTANCE, parent);
       addHeaderDelegateIfAbsent(Date.class, DateDelegate.INSTANCE, parent);
    }
-   
+
    protected UriBuilder createUriBuilder()
    {
       return new ResteasyUriBuilderImpl();
@@ -71,7 +72,7 @@ public class RuntimeDelegateUtil
    {
       return new VariantListBuilderImpl();
    }
-   
+
    protected Link.Builder createLinkBuilder()
    {
       return new LinkBuilderImpl();
