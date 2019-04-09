@@ -45,151 +45,151 @@ public class CompletionStageRxInvokerImpl implements CompletionStageRxInvoker
    @Override
    public CompletionStage<Response> get()
    {
-      return createClientInvocation(HttpMethod.GET, null).submitCF();
+      return createClientInvocation(HttpMethod.GET, null).submit();
    }
 
    @Override
    public <T> CompletionStage<T> get(Class<T> responseType)
    {
-      return createClientInvocation(HttpMethod.GET, null).submitCF(responseType);
+      return createClientInvocation(HttpMethod.GET, null).submit(responseType);
    }
 
    @Override
    public <T> CompletionStage<T> get(GenericType<T> responseType)
    {
-      return createClientInvocation(HttpMethod.GET, null).submitCF(responseType);
+      return createClientInvocation(HttpMethod.GET, null).submit(responseType);
    }
 
    @Override
    public CompletionStage<Response> put(Entity<?> entity)
    {
-      return createClientInvocation(HttpMethod.PUT, entity).submitCF();
+      return createClientInvocation(HttpMethod.PUT, entity).submit();
    }
 
    @Override
    public <T> CompletionStage<T> put(Entity<?> entity, Class<T> clazz)
    {
-      return createClientInvocation(HttpMethod.PUT, entity).submitCF(clazz);
+      return createClientInvocation(HttpMethod.PUT, entity).submit(clazz);
    }
 
    @Override
    public <T> CompletionStage<T> put(Entity<?> entity, GenericType<T> type)
    {
-      return createClientInvocation(HttpMethod.PUT, entity).submitCF(type);
+      return createClientInvocation(HttpMethod.PUT, entity).submit(type);
    }
 
    @Override
    public CompletionStage<Response> post(Entity<?> entity)
    {
-      return createClientInvocation(HttpMethod.POST, entity).submitCF();
+      return createClientInvocation(HttpMethod.POST, entity).submit();
    }
 
    @Override
    public <T> CompletionStage<T> post(Entity<?> entity, Class<T> clazz)
    {
-      return createClientInvocation(HttpMethod.POST, entity).submitCF(clazz);
+      return createClientInvocation(HttpMethod.POST, entity).submit(clazz);
    }
 
    @Override
    public <T> CompletionStage<T> post(Entity<?> entity, GenericType<T> type)
    {
-      return createClientInvocation(HttpMethod.POST, entity).submitCF(type);
+      return createClientInvocation(HttpMethod.POST, entity).submit(type);
    }
 
    @Override
    public CompletionStage<Response> delete()
    {
-      return createClientInvocation(HttpMethod.DELETE, null).submitCF();
+      return createClientInvocation(HttpMethod.DELETE, null).submit();
    }
 
    @Override
    public <T> CompletionStage<T> delete(Class<T> responseType)
    {
-      return createClientInvocation(HttpMethod.DELETE, null).submitCF(responseType);
+      return createClientInvocation(HttpMethod.DELETE, null).submit(responseType);
    }
 
    @Override
    public <T> CompletionStage<T> delete(GenericType<T> responseType)
    {
-      return createClientInvocation(HttpMethod.DELETE, null).submitCF(responseType);
+      return createClientInvocation(HttpMethod.DELETE, null).submit(responseType);
    }
 
    @Override
    public CompletionStage<Response> head()
    {
-      return createClientInvocation(HttpMethod.HEAD, null).submitCF();
+      return createClientInvocation(HttpMethod.HEAD, null).submit();
    }
 
    @Override
    public CompletionStage<Response> options()
    {
-      return createClientInvocation(HttpMethod.OPTIONS, null).submitCF();
+      return createClientInvocation(HttpMethod.OPTIONS, null).submit();
    }
 
    @Override
    public <T> CompletionStage<T> options(Class<T> responseType)
    {
-      return createClientInvocation(HttpMethod.OPTIONS, null).submitCF(responseType);
+      return createClientInvocation(HttpMethod.OPTIONS, null).submit(responseType);
    }
 
    @Override
    public <T> CompletionStage<T> options(GenericType<T> responseType)
    {
-      return createClientInvocation(HttpMethod.OPTIONS, null).submitCF(responseType);
+      return createClientInvocation(HttpMethod.OPTIONS, null).submit(responseType);
    }
 
    @Override
    public CompletionStage<Response> trace()
    {
-      return createClientInvocation("TRACE", null).submitCF();
+      return createClientInvocation("TRACE", null).submit();
    }
 
    @Override
    public <T> CompletionStage<T> trace(Class<T> responseType)
    {
-      return createClientInvocation("TRACE", null).submitCF(responseType);
+      return createClientInvocation("TRACE", null).submit(responseType);
    }
 
    @Override
    public <T> CompletionStage<T> trace(GenericType<T> responseType)
    {
-      return createClientInvocation("TRACE", null).submitCF(responseType);
+      return createClientInvocation("TRACE", null).submit(responseType);
    }
 
    @Override
    public CompletionStage<Response> method(String name)
    {
-      return createClientInvocation(name, null).submitCF();
+      return createClientInvocation(name, null).submit();
    }
 
    @Override
    public <T> CompletionStage<T> method(String name, Class<T> responseType)
    {
-      return createClientInvocation(name, null).submitCF(responseType);
+      return createClientInvocation(name, null).submit(responseType);
    }
 
    @Override
    public <T> CompletionStage<T> method(String name, GenericType<T> responseType)
    {
-      return createClientInvocation(name, null).submitCF(responseType);
+      return createClientInvocation(name, null).submit(responseType);
    }
 
    @Override
    public CompletionStage<Response> method(String name, Entity<?> entity)
    {
-      return createClientInvocation(name, entity).submitCF();
+      return createClientInvocation(name, entity).submit();
    }
 
    @Override
    public <T> CompletionStage<T> method(String name, Entity<?> entity, Class<T> responseType)
    {
-      return createClientInvocation(name, entity).submitCF(responseType);
+      return createClientInvocation(name, entity).submit(responseType);
    }
 
    @Override
    public <T> CompletionStage<T> method(String name, Entity<?> entity, GenericType<T> responseType)
    {
-      return createClientInvocation(name, entity).submitCF(responseType);
+      return createClientInvocation(name, entity).submit(responseType);
    }
 
    public ExecutorService getExecutor()
@@ -199,17 +199,17 @@ public class CompletionStageRxInvokerImpl implements CompletionStageRxInvoker
 
    public CompletionStage<Response> patch(Entity<?> entity)
    {
-      return createClientInvocation(HttpMethod.PATCH, entity).submitCF();
+      return createClientInvocation(HttpMethod.PATCH, entity).submit();
    }
 
    public <T> CompletionStage<T> patch(Entity<?> entity, Class<T> responseType)
    {
-      return createClientInvocation(HttpMethod.PATCH, entity).submitCF(responseType);
+      return createClientInvocation(HttpMethod.PATCH, entity).submit(responseType);
    }
 
    public <T> CompletionStage<T> patch(Entity<?> entity, GenericType<T> responseType)
    {
-      return createClientInvocation(HttpMethod.PATCH, entity).submitCF(responseType);
+      return createClientInvocation(HttpMethod.PATCH, entity).submit(responseType);
    }
 
 }
