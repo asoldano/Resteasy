@@ -1,10 +1,10 @@
 package org.jboss.resteasy.test.exception;
 
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
+import org.eclipse.microprofile.rest.client.spi.RestClientBuilderResolver;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.resteasy.client.microprofile.MicroprofileClientBuilderResolver;
 import org.jboss.resteasy.test.exception.resource.ExceptionMapperRuntimeExceptionWithReasonMapper;
 import org.jboss.resteasy.test.exception.resource.ResponseExceptionMapperRuntimeExceptionMapper;
 import org.jboss.resteasy.test.exception.resource.ResponseExceptionMapperRuntimeExceptionResource;
@@ -44,7 +44,7 @@ public class ResponseExceptionMapperRuntimeExceptionTest {
     */
    @Test
    public void testRuntimeApplicationException() throws Exception {
-      ResponseExceptionMapperRuntimeExceptionResourceInterface service = MicroprofileClientBuilderResolver.instance()
+      ResponseExceptionMapperRuntimeExceptionResourceInterface service = RestClientBuilderResolver.instance()
             .newBuilder()
             .baseUrl(new URL(PortProviderUtil.generateURL("/test",
                   ResponseExceptionMapperRuntimeExceptionTest.class.getSimpleName())))

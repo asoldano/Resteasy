@@ -256,10 +256,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client-microprofile</artifactId>
-            <version>${version.resteasy.testsuite}</version>
-            <scope>provided</scope>
+            <groupId>io.smallrye</groupId>
+            <artifactId>smallrye-rest-client</artifactId>
         </dependency>
 
         <dependency>

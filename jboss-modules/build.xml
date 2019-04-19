@@ -166,7 +166,7 @@
         <module-def name="org.jboss.resteasy.resteasy-jaxrs">
             <maven-resource group="org.jboss.resteasy" artifact="resteasy-core"/>
             <maven-resource group="org.jboss.resteasy" artifact="resteasy-client"/>
-            <maven-resource group="org.jboss.resteasy" artifact="resteasy-client-microprofile"/>
+            <maven-resource group="io.smallrye" artifact="smallrye-rest-client"/>
             <maven-resource group="org.jboss.resteasy" artifact="resteasy-tracing-api"/>
         </module-def>
 

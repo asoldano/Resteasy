@@ -95,6 +95,10 @@
             <artifactId>smallrye-context-propagation-propagators-rxjava2</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.smallrye</groupId>
+            <artifactId>smallrye-rest-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.microprofile.context-propagation</groupId>
             <artifactId>microprofile-context-propagation-api</artifactId>
         </dependency>
@@ -128,11 +132,6 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client-microprofile</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
