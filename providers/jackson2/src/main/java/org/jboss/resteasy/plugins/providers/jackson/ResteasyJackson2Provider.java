@@ -9,7 +9,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -35,6 +34,7 @@ import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterModifier;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.fasterxml.jackson.jaxrs.json.JsonEndpointConfig;
 import com.fasterxml.jackson.jaxrs.util.ClassKey;
+import com.fasterxml.jackson.jaxrs.util.LRUMap;
 
 /**
  * Only different from Jackson one is *+json in @Produces/@Consumes
@@ -101,8 +101,8 @@ public class ResteasyJackson2Provider extends JacksonJaxbJsonProvider
       }
    }
 
-   protected final ConcurrentHashMap<ClassAnnotationKey, JsonEndpointConfig> _readers
-         = new ConcurrentHashMap<ClassAnnotationKey, JsonEndpointConfig>();
+   protected final LRUMap<ClassAnnotationKey, JsonEndpointConfig> _readers
+         = new LRUMap<ClassAnnotationKey, JsonEndpointConfig>(16, 120);
 
    @Override
    public Object readFrom(Class<Object> type, final Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String,String> httpHeaders, InputStream entityStream)
@@ -111,12 +111,18 @@ public class ResteasyJackson2Provider extends JacksonJaxbJsonProvider
       LogMessages.LOGGER.debugf("Provider : %s,  Method : readFrom", getClass().getName());
       ClassAnnotationKey key = new ClassAnnotationKey(type, annotations);
       JsonEndpointConfig endpoint;
-      endpoint = _readers.get(key);
+      synchronized (_readers)
+      {
+         endpoint = _readers.get(key);
+      }
       // not yet resolved (or not cached any more)? Resolve!
       if (endpoint == null) {
          ObjectMapper mapper = locateMapper(type, mediaType);
          endpoint = _configForReading(mapper, annotations, null);
-         _readers.put(key, endpoint);
+         synchronized (_readers)
+         {
+            _readers.put(key, endpoint);
+         }
       }
       final ObjectReader reader = endpoint.getReader();
       final JsonParser jp = _createParser(reader, entityStream);
@@ -153,8 +159,8 @@ public class ResteasyJackson2Provider extends JacksonJaxbJsonProvider
       return result;
    }
 
-   protected final ConcurrentHashMap<ClassAnnotationKey, JsonEndpointConfig> _writers
-         = new ConcurrentHashMap<ClassAnnotationKey, JsonEndpointConfig>();
+   protected final LRUMap<ClassAnnotationKey, JsonEndpointConfig> _writers
+         = new LRUMap<ClassAnnotationKey, JsonEndpointConfig>(16, 120);
 
    @Override
    public void writeTo(Object value, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
@@ -171,7 +177,10 @@ public class ResteasyJackson2Provider extends JacksonJaxbJsonProvider
       };
       ClassAnnotationKey key = new ClassAnnotationKey(type, annotations);
       JsonEndpointConfig endpoint;
-      endpoint = _writers.get(key);
+      synchronized (_writers)
+      {
+         endpoint = _writers.get(key);
+      }
 
       // not yet resolved (or not cached any more)? Resolve!
       if (endpoint == null) {
@@ -179,7 +188,10 @@ public class ResteasyJackson2Provider extends JacksonJaxbJsonProvider
          endpoint = _configForWriting(mapper, annotations, null);
 
          // and cache for future reuse
-         _writers.put(key, endpoint);
+         synchronized (_writers)
+         {
+            _writers.put(key, endpoint);
+         }
       }
 
       ObjectWriter writer = endpoint.getWriter();
