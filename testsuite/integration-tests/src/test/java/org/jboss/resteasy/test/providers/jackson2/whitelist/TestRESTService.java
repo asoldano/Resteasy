@@ -13,11 +13,13 @@ import org.jboss.resteasy.test.providers.jackson2.whitelist.model.TestPolymorphi
  *
  */
 @Path("/test")
-public class TestRESTService {
-	@POST
-	@Path("/post")
-	@Consumes("application/json")
-	public Response postTest(TestPolymorphicType test) {		
-		return Response.status(HttpResponseCodes.SC_CREATED).entity("Test success: " + test).build();
-	}
+public class TestRESTService
+{
+   @POST
+   @Path("/post")
+   @Consumes("application/json")
+   public Response postTest(TestPolymorphicType test)
+   {
+      return Response.status(HttpResponseCodes.SC_CREATED).entity("Test success: " + test).build();
+   }
 }

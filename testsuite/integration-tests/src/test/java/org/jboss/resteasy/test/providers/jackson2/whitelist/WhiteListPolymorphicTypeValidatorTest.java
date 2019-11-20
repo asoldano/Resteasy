@@ -31,8 +31,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
-
 
 /**
  * @tpSubChapter Jackson2 provider
@@ -41,31 +42,38 @@ import java.util.stream.Collectors;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-public class WhiteListPolymorphicTypeValidatorTest {
+public class WhiteListPolymorphicTypeValidatorTest
+{
 
    protected static final Logger logger = Logger.getLogger(WhiteListPolymorphicTypeValidatorTest.class.getName());
 
    static ResteasyClient client;
 
    @Deployment(name = "default")
-   public static Archive<?> deploy() {
+   public static Archive<?> deploy()
+   {
       WebArchive war = TestUtil.prepareArchive(WhiteListPolymorphicTypeValidatorTest.class.getSimpleName());
       war.addClass(WhiteListPolymorphicTypeValidatorTest.class);
-      return TestUtil.finishContainerPrepare(war, null, JaxRsActivator.class, TestRESTService.class,
+      Map<String, String> contextParam = new HashMap<>();
+      contextParam.put("jackson.deserialization.whitelist.allowIfSubType.prefix", "org.jboss.resteasy.test.providers.jackson2.whitelist.model.land");
+      return TestUtil.finishContainerPrepare(war, contextParam, JaxRsActivator.class, TestRESTService.class,
             TestPolymorphicType.class, AbstractVehicle.class, Automobile.class, Aircraft.class);
    }
 
    @Before
-   public void init() {
-      client = (ResteasyClient)ClientBuilder.newClient();
+   public void init()
+   {
+      client = (ResteasyClient) ClientBuilder.newClient();
    }
 
    @After
-   public void after() throws Exception {
+   public void after() throws Exception
+   {
       client.close();
    }
 
-   private String generateURL(String path) {
+   private String generateURL(String path)
+   {
       return PortProviderUtil.generateURL(path, WhiteListPolymorphicTypeValidatorTest.class.getSimpleName());
    }
 
@@ -75,7 +83,8 @@ public class WhiteListPolymorphicTypeValidatorTest {
     * @tpSince RESTEasy 4.5.0
     */
    @Test
-   public void testGood() throws Exception {
+   public void testGood() throws Exception
+   {
       String response = sendPost(new TestPolymorphicType(new Automobile()));
       logger.info("response: " + response);
       Assert.assertNotNull(response);
@@ -89,20 +98,24 @@ public class WhiteListPolymorphicTypeValidatorTest {
     * @tpSince RESTEasy 4.5.0
     */
    @Test
-   public void testBad() throws Exception {
+   public void testBad() throws Exception
+   {
       String response = sendPost(new TestPolymorphicType(new Aircraft()));
       logger.info("response: " + response);
       Assert.assertNotNull(response);
       Assert.assertTrue(response.contains("Response code: " + HttpResponseCodes.SC_BAD_REQUEST));
-      Assert.assertTrue(response.contains("Configured `PolymorphicTypeValidator`") && response.contains("denied resolution"));
+      Assert.assertTrue(
+            response.contains("Configured `PolymorphicTypeValidator`") && response.contains("denied resolution"));
    }
 
-   private String createJSONString(TestPolymorphicType t) throws Exception {
+   private String createJSONString(TestPolymorphicType t) throws Exception
+   {
       ObjectMapper mapper = new ObjectMapper();
       return mapper.writeValueAsString(t);
    }
 
-   private String sendPost(TestPolymorphicType t) throws Exception {
+   private String sendPost(TestPolymorphicType t) throws Exception
+   {
 
       logger.info("Creating JSON test data");
       String jsonData = createJSONString(t);
@@ -113,7 +126,7 @@ public class WhiteListPolymorphicTypeValidatorTest {
       logger.info("POST data to : " + urlString);
       URL url = new URL(urlString);
       URLConnection con = url.openConnection();
-      HttpURLConnection http = (HttpURLConnection)con;
+      HttpURLConnection http = (HttpURLConnection) con;
       http.setRequestMethod("POST"); // PUT is another valid option
       http.setDoOutput(true);
 
@@ -122,20 +135,27 @@ public class WhiteListPolymorphicTypeValidatorTest {
       http.setFixedLengthStreamingMode(out.length);
       http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
       http.connect();
-      try(OutputStream os = http.getOutputStream()) {
+      try (OutputStream os = http.getOutputStream())
+      {
          os.write(out);
       }
 
       InputStream is = null;
-      if (http.getResponseCode() != 200) {
+      if (http.getResponseCode() != 200)
+      {
          is = http.getErrorStream();
-      } else {
+      }
+      else
+      {
          /* error from server */
          is = http.getInputStream();
       }
 
-      String result = is == null ? "" : new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-      String response = String.format("Response code: %s response message: %s  %s", http.getResponseCode(), http.getResponseMessage(), result);
+      String result = is == null
+            ? ""
+            : new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
+      String response = String.format("Response code: %s response message: %s  %s", http.getResponseCode(),
+            http.getResponseMessage(), result);
 
       logger.info("Response: " + response);
 

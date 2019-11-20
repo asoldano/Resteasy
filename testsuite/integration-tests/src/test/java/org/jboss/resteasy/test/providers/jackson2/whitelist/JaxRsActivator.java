@@ -8,5 +8,6 @@ import javax.ws.rs.core.Application;
  *
  */
 @ApplicationPath("/")
-public class JaxRsActivator extends Application {
+public class JaxRsActivator extends Application
+{
 }
