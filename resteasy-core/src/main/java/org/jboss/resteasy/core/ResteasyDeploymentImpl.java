@@ -17,7 +17,6 @@ import org.jboss.resteasy.spi.ResourceFactory;
 import org.jboss.resteasy.spi.ResteasyConfiguration;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.jboss.resteasy.spi.ResteasyProviderFactoryBuilder.Strategy;
 import org.jboss.resteasy.spi.metadata.ResourceBuilder;
 import org.jboss.resteasy.util.GetRestful;
 
@@ -102,7 +101,6 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
       // it is very important that each deployment create their own provider factory
       // this allows each WAR to have their own set of providers
       if (providerFactory == null) providerFactory = ResteasyProviderFactory.newInstance();
-      ResteasyProviderFactory.setInstance(providerFactory, Strategy.TCCL_STRATEGY);
       providerFactory.setRegisterBuiltins(registerBuiltin);
       providerFactory.getStatisticsController().setEnabled(statisticsEnabled);
 
@@ -164,6 +162,7 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
 //      {
 //         ResteasyProviderFactory.setInstance(providerFactory);
 //      }
+      ResteasyProviderFactory.setInstance(providerFactory);
 
 
       if (asyncJobServiceEnabled)
@@ -585,7 +584,7 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
       }
 
 //      ResteasyProviderFactory.clearInstanceIfEqual(threadLocalProviderFactory);
-      ResteasyProviderFactory.clearInstanceIfEqual(providerFactory, Strategy.TCCL_STRATEGY);
+      ResteasyProviderFactory.clearInstanceIfEqual(providerFactory);
    }
 
    /**

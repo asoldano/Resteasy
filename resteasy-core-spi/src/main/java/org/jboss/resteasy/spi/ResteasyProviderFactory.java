@@ -32,7 +32,6 @@ import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.RuntimeDelegate;
 import javax.ws.rs.ext.WriterInterceptor;
 
-import org.jboss.resteasy.spi.ResteasyProviderFactoryBuilder.Strategy;
 import org.jboss.resteasy.spi.interception.JaxrsInterceptorRegistry;
 import org.jboss.resteasy.spi.metadata.ResourceBuilder;
 import org.jboss.resteasy.spi.statistics.StatisticsController;
@@ -44,11 +43,9 @@ import org.jboss.resteasy.spi.statistics.StatisticsController;
 @SuppressWarnings({"rawtypes"})
 public abstract class ResteasyProviderFactory extends RuntimeDelegate implements Providers, HeaderValueProcessor, Configurable<ResteasyProviderFactory>, Configuration
 {
-   private static final Map<ClassLoader, ResteasyProviderFactory> classLoaderProviderFactories = new WeakHashMap<>();
-   private static final ThreadLocal<ResteasyProviderFactory> threadProviderFactories = new InheritableThreadLocal<>();
-   private static final ResteasyProviderFactoryBuilder builder = ServiceLoader.load(ResteasyProviderFactoryBuilder.class).iterator().next(); //TODO fallback in case of no such element?
+   private static final Map<ClassLoader, ResteasyProviderFactory> classLoaderProviderFactories = new WeakHashMap<>(4); //null key in case of missing threadcontext classloader
 
-//   private static volatile ResteasyProviderFactory instance;
+   private static final ResteasyProviderFactoryBuilder builder = ServiceLoader.load(ResteasyProviderFactoryBuilder.class).iterator().next(); //TODO fallback in case of no such element?
 
    private static boolean registerBuiltinByDefault = true;
 
@@ -76,25 +73,7 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
          boolean unwrapAsync);
 
 
-   public static ResteasyProviderFactory getThreadInstance(boolean create) {
-      ResteasyProviderFactory rpf = threadProviderFactories.get();
-      if (create && rpf == null)
-      {
-         synchronized (threadProviderFactories)
-         {
-            rpf = threadProviderFactories.get();
-            if (rpf == null)
-            {
-               rpf = builder.newInstance(registerBuiltinByDefault);
-               threadProviderFactories.set(rpf);
-            }
-         }
-      }
-      return rpf;
-   }
-
-   public static ResteasyProviderFactory getTCCLInstance(boolean create) {
-      final ClassLoader loader = getContextClassLoader();
+   private static ResteasyProviderFactory getInstance(boolean create, ClassLoader loader) {
       ResteasyProviderFactory rpf = classLoaderProviderFactories.get(loader);
       if (create && rpf == null)
       {
@@ -116,36 +95,15 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
     *
     * @return provider factory singleton
     */
-   public static ResteasyProviderFactory peekInstance(Strategy s)
-   {
-      if (Strategy.TCCL_STRATEGY == s) {
-         return getTCCLInstance(false);
-      } else if (Strategy.THREAD_STRATEGY == s) {
-         return getThreadInstance(false);
-      }
-      return null;
-   }
    public static ResteasyProviderFactory peekInstance()
    {
-      return peekInstance(builder.getStrategy());
+      return getInstance(false, getContextClassLoader());
    }
 
-   public static synchronized void clearInstanceIfEqual(ResteasyProviderFactory factory, Strategy s)
+   public static synchronized void clearInstanceIfEqual(ResteasyProviderFactory factory)
    {
-      if (Strategy.TCCL_STRATEGY == s) {
-         if (factory == getTCCLInstance(false)) {
-            classLoaderProviderFactories.remove(getContextClassLoader());
-         }
-      } else if (Strategy.THREAD_STRATEGY == s) {
-         if (factory == getThreadInstance(false)) {
-            threadProviderFactories.remove();
-         }
-      }
-   }
-
-   public static void clearInstanceIfEqual(ResteasyProviderFactory factory)
-   {
-      clearInstanceIfEqual(factory, builder.getStrategy());
+      ClassLoader loader = getContextClassLoader();
+      classLoaderProviderFactories.remove(loader, getInstance(false, loader));
    }
 
    /**
@@ -153,32 +111,13 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
     *
     * @return singleton provider factory
     */
-   public static ResteasyProviderFactory getInstance(Strategy s)
-   {
-      if (Strategy.TCCL_STRATEGY == s) {
-         return getTCCLInstance(true);
-      } else if (Strategy.THREAD_STRATEGY == s) {
-         return getThreadInstance(true);
-      }
-      return null;
-//               if (registerBuiltinByDefault)
-//                  instance.registerBuiltin();
-   }
    public static ResteasyProviderFactory getInstance()
    {
-      return getInstance(builder.getStrategy());
-   }
-
-   public static void setInstance(final ResteasyProviderFactory rpf, Strategy s) {
-      if (Strategy.TCCL_STRATEGY == s) {
-         classLoaderProviderFactories.put(getContextClassLoader(), rpf);
-      } else if (Strategy.THREAD_STRATEGY == s) {
-         threadProviderFactories.set(rpf);
-      }
+      return getInstance(true, getContextClassLoader());
    }
 
    public static void setInstance(final ResteasyProviderFactory rpf) {
-      setInstance(rpf, builder.getStrategy());
+      classLoaderProviderFactories.put(getContextClassLoader(), rpf);
    }
 
    public static ResteasyProviderFactory newInstance()
