@@ -101,6 +101,7 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
       // it is very important that each deployment create their own provider factory
       // this allows each WAR to have their own set of providers
       if (providerFactory == null) providerFactory = ResteasyProviderFactory.newInstance();
+      ResteasyProviderFactory.setInstance(providerFactory);
       providerFactory.setRegisterBuiltins(registerBuiltin);
       providerFactory.getStatisticsController().setEnabled(statisticsEnabled);
 
@@ -135,33 +136,33 @@ public class ResteasyDeploymentImpl implements ResteasyDeployment
          }
       }
 
-      if (deploymentSensitiveFactoryEnabled)
-      {
-         // the ThreadLocalResteasyProviderFactory pushes and pops this deployments parentProviderFactory
-         // on a ThreadLocal stack.  This allows each application/WAR to have their own parentProviderFactory
-         // and still be able to call ResteasyProviderFactory.getInstance()
-         if (!(providerFactory instanceof ThreadLocalResteasyProviderFactory))
-         {
-            if (ResteasyProviderFactory.peekInstance() == null || !(ResteasyProviderFactory.peekInstance() instanceof ThreadLocalResteasyProviderFactory))
-            {
-
-               threadLocalProviderFactory = new ThreadLocalResteasyProviderFactory(providerFactory);
-               ResteasyProviderFactory.setInstance(threadLocalProviderFactory);
-            }
-            else
-            {
-               ThreadLocalResteasyProviderFactory.push(providerFactory);
-            }
-         }
-         else
-         {
-            ThreadLocalResteasyProviderFactory.push(providerFactory);
-         }
-      }
-      else
-      {
-         ResteasyProviderFactory.setInstance(providerFactory);
-      }
+//      if (deploymentSensitiveFactoryEnabled)
+//      {
+//         // the ThreadLocalResteasyProviderFactory pushes and pops this deployments parentProviderFactory
+//         // on a ThreadLocal stack.  This allows each application/WAR to have their own parentProviderFactory
+//         // and still be able to call ResteasyProviderFactory.getInstance()
+//         if (!(providerFactory instanceof ThreadLocalResteasyProviderFactory))
+//         {
+//            if (ResteasyProviderFactory.peekInstance() == null || !(ResteasyProviderFactory.peekInstance() instanceof ThreadLocalResteasyProviderFactory))
+//            {
+//
+//               threadLocalProviderFactory = new ThreadLocalResteasyProviderFactory(providerFactory);
+//               ResteasyProviderFactory.setInstance(threadLocalProviderFactory);
+//            }
+//            else
+//            {
+//               ThreadLocalResteasyProviderFactory.push(providerFactory);
+//            }
+//         }
+//         else
+//         {
+//            ThreadLocalResteasyProviderFactory.push(providerFactory);
+//         }
+//      }
+//      else
+//      {
+//         ResteasyProviderFactory.setInstance(providerFactory);
+//      }
 
 
       if (asyncJobServiceEnabled)
