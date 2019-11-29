@@ -116,9 +116,8 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
     *
     * @return provider factory singleton
     */
-   public static ResteasyProviderFactory peekInstance()
+   public static ResteasyProviderFactory peekInstance(Strategy s)
    {
-      Strategy s = builder.getStrategy();
       if (Strategy.TCCL_STRATEGY == s) {
          return getTCCLInstance(false);
       } else if (Strategy.THREAD_STRATEGY == s) {
@@ -126,10 +125,13 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
       }
       return null;
    }
-
-   public static synchronized void clearInstanceIfEqual(ResteasyProviderFactory factory)
+   public static ResteasyProviderFactory peekInstance()
    {
-      Strategy s = builder.getStrategy();
+      return peekInstance(builder.getStrategy());
+   }
+
+   public static synchronized void clearInstanceIfEqual(ResteasyProviderFactory factory, Strategy s)
+   {
       if (Strategy.TCCL_STRATEGY == s) {
          if (factory == getTCCLInstance(false)) {
             classLoaderProviderFactories.remove(getContextClassLoader());
@@ -141,14 +143,18 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
       }
    }
 
+   public static void clearInstanceIfEqual(ResteasyProviderFactory factory)
+   {
+      clearInstanceIfEqual(factory, builder.getStrategy());
+   }
+
    /**
     * Initializes ResteasyProviderFactory singleton if not set.
     *
     * @return singleton provider factory
     */
-   public static ResteasyProviderFactory getInstance()
+   public static ResteasyProviderFactory getInstance(Strategy s)
    {
-      Strategy s = builder.getStrategy();
       if (Strategy.TCCL_STRATEGY == s) {
          return getTCCLInstance(true);
       } else if (Strategy.THREAD_STRATEGY == s) {
@@ -158,14 +164,21 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
 //               if (registerBuiltinByDefault)
 //                  instance.registerBuiltin();
    }
+   public static ResteasyProviderFactory getInstance()
+   {
+      return getInstance(builder.getStrategy());
+   }
 
-   public static void setInstance(final ResteasyProviderFactory rpf) {
-      Strategy s = builder.getStrategy();
+   public static void setInstance(final ResteasyProviderFactory rpf, Strategy s) {
       if (Strategy.TCCL_STRATEGY == s) {
          classLoaderProviderFactories.put(getContextClassLoader(), rpf);
       } else if (Strategy.THREAD_STRATEGY == s) {
          threadProviderFactories.set(rpf);
       }
+   }
+
+   public static void setInstance(final ResteasyProviderFactory rpf) {
+      setInstance(rpf, builder.getStrategy());
    }
 
    public static ResteasyProviderFactory newInstance()

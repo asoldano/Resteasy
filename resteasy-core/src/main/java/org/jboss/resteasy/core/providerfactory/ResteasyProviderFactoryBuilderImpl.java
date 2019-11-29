@@ -22,7 +22,7 @@ public class ResteasyProviderFactoryBuilderImpl implements ResteasyProviderFacto
    public Strategy getStrategy()
    {
       // TODO use MP Config
-      return strategy != null ? strategy : Strategy.TCCL_STRATEGY;
+      return strategy != null ? strategy : Strategy.THREAD_STRATEGY;
    }
 
    @Override

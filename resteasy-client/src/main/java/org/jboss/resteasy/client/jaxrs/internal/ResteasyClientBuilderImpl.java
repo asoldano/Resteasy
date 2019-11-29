@@ -13,6 +13,7 @@ import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryDelegate;
 import org.jboss.resteasy.plugins.interceptors.AcceptEncodingGZIPFilter;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.ResteasyProviderFactoryBuilder.Strategy;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -354,9 +355,10 @@ public class ResteasyClientBuilderImpl extends ResteasyClientBuilder
          // create a new one
          providerFactory = new LocalResteasyProviderFactory(RegisterBuiltin.getClientInitializedResteasyProviderFactory(loader));
 
-         if (ResteasyProviderFactory.peekInstance() != null)
+         ResteasyProviderFactory tcclProviderFactory = ResteasyProviderFactory.peekInstance(Strategy.TCCL_STRATEGY);
+         if (tcclProviderFactory != null)
          {
-            providerFactory.initializeClientProviders(ResteasyProviderFactory.getInstance());
+            providerFactory.initializeClientProviders(tcclProviderFactory);
          }
          // Execution of 'if' above overwrites providerFactory clientRequestFilterRegistry
          // Reregister provider as appropriate.

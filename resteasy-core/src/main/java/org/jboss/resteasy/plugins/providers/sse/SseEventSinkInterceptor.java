@@ -15,6 +15,7 @@ import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ResteasyContext;
 import org.jboss.resteasy.core.interception.jaxrs.PostMatchContainerRequestContext;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.ResteasyProviderFactoryBuilder.Strategy;
 import org.jboss.resteasy.spi.util.FindAnnotation;
 
 @Provider
@@ -27,7 +28,7 @@ public class SseEventSinkInterceptor implements ContainerRequestFilter
       ResourceMethodInvoker rmi = ((PostMatchContainerRequestContext) requestContext).getResourceMethod();
       Stream stream = FindAnnotation.findAnnotation(rmi.getMethodAnnotations(), Stream.class);
       Stream.MODE mode = stream != null ? stream.value() : null;
-      if ((mode == Stream.MODE.GENERAL && ResteasyProviderFactory.getInstance().getAsyncStreamProvider(rmi.getReturnType()) != null)  ||
+      if ((mode == Stream.MODE.GENERAL && ResteasyProviderFactory.getInstance(Strategy.TCCL_STRATEGY).getAsyncStreamProvider(rmi.getReturnType()) != null)  ||
          requestContext instanceof PostMatchContainerRequestContext && rmi.isSse())
       {
          SseEventOutputImpl sink = new SseEventOutputImpl(new SseEventProvider());
