@@ -28,7 +28,7 @@ public class InterceptorBookWriter implements MessageBodyWriter<InterceptorBook>
 
    static {
       logger.info("In InterceptorBookWriter static {}");
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       delegate = factory.getMessageBodyWriter(InterceptorBook.class, null, null, Constants.MEDIA_TYPE_TEST_XML_TYPE);
    }
 

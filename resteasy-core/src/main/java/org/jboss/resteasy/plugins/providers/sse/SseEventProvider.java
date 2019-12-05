@@ -21,6 +21,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.sse.OutboundSseEvent;
 
+import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.util.MediaTypeHelper;
@@ -103,8 +104,9 @@ public class SseEventProvider implements MessageBodyWriter<OutboundSseEvent>, Me
             }
 
             entityStream.write(SseConstants.DATA_LEAD);
-            MessageBodyWriter writer = ResteasyProviderFactory.getInstance().getMessageBodyWriter(payloadClass,
-                  payloadType, annotations, event.getMediaType());
+            ResteasyProviderFactory f = ResteasyProviderFactory.peekInstance();
+            MessageBodyWriter writer = f != null ? f.getMessageBodyWriter(payloadClass,
+                  payloadType, annotations, event.getMediaType()) : null;
 
             if (writer == null)
             {

@@ -39,7 +39,7 @@ public class EJBBookReaderImpl implements EJBBookReader, MessageBodyReader<EJBBo
    }
 
    static {
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       delegate = factory.getMessageBodyReader(NonBook.class, null, null, MediaType.APPLICATION_XML_TYPE);
       log.info("reader delegate: " + delegate);  // Should be JAXBXmlRootElementProvider.
    }

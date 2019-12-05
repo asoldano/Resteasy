@@ -1,5 +1,7 @@
 package org.jboss.resteasy.spi;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.security.AccessController;
@@ -107,6 +109,8 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
    public static ResteasyProviderFactory getInstance()
    {
       ResteasyProviderFactory result = instance;
+      StringWriter sw = new StringWriter();
+      new Throwable("").printStackTrace(new PrintWriter(sw));
       if (result == null)
       { // First check (no locking)
          synchronized (RD_LOCK)
@@ -127,6 +131,9 @@ public abstract class ResteasyProviderFactory extends RuntimeDelegate implements
                   instance.registerBuiltin();
             }
          }
+         System.out.println(">> Created instance: " + instance + "\n" + sw.toString());
+      } else {
+         System.out.println(">> Reusing instance: " + instance + "\n" + sw.toString());
       }
       return instance;
    }

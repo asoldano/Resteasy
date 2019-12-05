@@ -30,7 +30,7 @@ public class EventsBookWriter implements MessageBodyWriter<EJBBook> {
    private Logger log;
 
    static {
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       delegate = factory.getMessageBodyWriter(EJBBook.class, null, null, Constants.MEDIA_TYPE_TEST_XML_TYPE);
    }
 

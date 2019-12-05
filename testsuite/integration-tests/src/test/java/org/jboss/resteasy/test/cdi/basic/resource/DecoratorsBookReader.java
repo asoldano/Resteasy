@@ -25,7 +25,7 @@ public class DecoratorsBookReader implements MessageBodyReader<EJBBook> {
    private Logger log;
 
    static {
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       delegate = factory.getMessageBodyReader(EJBBook.class, null, null, Constants.MEDIA_TYPE_TEST_XML_TYPE);
    }
 

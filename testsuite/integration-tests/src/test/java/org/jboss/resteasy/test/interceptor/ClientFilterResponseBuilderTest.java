@@ -66,6 +66,7 @@ public class ClientFilterResponseBuilderTest {
             Assert.assertEquals("test", result);
             Assert.assertEquals(200, status);
         } catch (ProcessingException pe) {
+           pe.printStackTrace();
             Assert.fail(pe.getMessage());
         }
     }

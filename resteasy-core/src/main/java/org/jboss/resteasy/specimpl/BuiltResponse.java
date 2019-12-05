@@ -3,6 +3,7 @@ package org.jboss.resteasy.specimpl;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.interception.jaxrs.AbstractReaderInterceptorContext;
 import org.jboss.resteasy.core.interception.jaxrs.ClientReaderInterceptorContext;
+import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.plugins.providers.sse.EventInput;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages;
 import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
@@ -150,9 +151,9 @@ public class BuiltResponse extends AbstractBuiltResponse
 
          }
 
-         ResteasyProviderFactory providerFactory = ResteasyProviderFactory.getInstance();
+         ResteasyProviderFactory providerFactory = ResteasyProviderFactory.peekInstance();
          ReaderInterceptor[] readerInterceptors = providerFactory
-                 .getServerReaderInterceptorRegistry()
+                 .getClientReaderInterceptorRegistry()
                  .postMatch(null, null);
 
          final Object finalObj;

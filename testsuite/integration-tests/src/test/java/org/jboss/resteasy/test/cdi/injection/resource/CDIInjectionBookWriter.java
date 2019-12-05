@@ -28,7 +28,7 @@ public class CDIInjectionBookWriter implements MessageBodyWriter<CDIInjectionBoo
    private CDIInjectionStatefulEJB stateful;
 
    static {
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       delegate = factory.getMessageBodyWriter(CDIInjectionBook.class, null, null, Constants.MEDIA_TYPE_TEST_XML_TYPE);
    }
 

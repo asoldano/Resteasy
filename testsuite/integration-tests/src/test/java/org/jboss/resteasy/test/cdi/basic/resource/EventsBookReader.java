@@ -34,7 +34,7 @@ public class EventsBookReader implements MessageBodyReader<EJBBook> {
 
    static {
       log.info("In BookReader static {}");
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       delegate = factory.getMessageBodyReader(EJBBook.class, null, null, Constants.MEDIA_TYPE_TEST_XML_TYPE);
       log.info("In BookReader static {}");
    }

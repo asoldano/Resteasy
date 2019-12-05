@@ -30,7 +30,7 @@ public class CDIInjectionBookReader implements MessageBodyReader<CDIInjectionBoo
 
    static {
       log.info("In BookReader static {}");
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       delegate = factory.getMessageBodyReader(CDIInjectionBook.class, null, null, Constants.MEDIA_TYPE_TEST_XML_TYPE);
       log.info("In BookReader static {}");
    }

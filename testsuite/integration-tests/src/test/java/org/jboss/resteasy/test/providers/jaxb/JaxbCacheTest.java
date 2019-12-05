@@ -57,7 +57,7 @@ public class JaxbCacheTest {
     */
    @Test
    public void testCache() throws Exception {
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       ResteasyContext.pushContext(Providers.class, factory);
       {
          ContextResolver<JAXBContextFinder> resolver = factory.getContextResolver(JAXBContextFinder.class, MediaType.APPLICATION_XML_TYPE);
@@ -88,7 +88,7 @@ public class JaxbCacheTest {
     */
    @Test
    public void testCache2() throws Exception {
-      ResteasyProviderFactory factory = ResteasyProviderFactory.getInstance();
+      ResteasyProviderFactory factory = ResteasyProviderFactory.newInstance();
       ResteasyContext.pushContext(Providers.class, factory);
       {
          ContextResolver<JAXBContextFinder> resolver = factory.getContextResolver(JAXBContextFinder.class, MediaType.APPLICATION_XML_TYPE);
