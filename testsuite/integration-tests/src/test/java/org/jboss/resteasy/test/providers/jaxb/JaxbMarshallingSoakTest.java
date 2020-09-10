@@ -19,6 +19,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,6 +48,7 @@ import java.util.logging.LoggingPermission;
  * @tpSince RESTEasy 3.0.16
  */
 @RunWith(Arquillian.class)
+@Ignore
 public class JaxbMarshallingSoakTest {
    private static Logger logger = Logger.getLogger(JaxbMarshallingSoakTest.class);
    public static int iterator = 500;
