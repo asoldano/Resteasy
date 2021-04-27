@@ -1,5 +1,6 @@
 # RESTEasy
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/69888be8ae9345d19e76b1103d1c3688)](https://www.codacy.com/app/asoldano/Resteasy?utm_source=github.com&utm_medium=referral&utm_content=asoldano/Resteasy&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/resteasy/Resteasy.svg?branch=master)](https://travis-ci.org/resteasy/Resteasy)
 
 RESTEasy is a JBoss.org project aimed at providing productivity frameworks for developing client and server RESTful applications and services in Java.  It is mainly a JAX-RS implementation but you'll find some other experimental code in the repository.
